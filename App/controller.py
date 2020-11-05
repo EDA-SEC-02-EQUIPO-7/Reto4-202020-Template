@@ -48,7 +48,7 @@ def newAnalyzer():
 #  de datos en los modelos
 # ___________________________________________________
 def loadTrips(analyzer):
-    for filename in os.listdir(cf.data_dir):
+    for filename in cf.file_dir(cf.data_dir):    
         if filename.endswith('.csv'):
             print('Cargando archivo: ' + filename)
             loadFile(analyzer, filename)
