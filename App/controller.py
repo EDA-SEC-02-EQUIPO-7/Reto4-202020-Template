@@ -40,29 +40,29 @@ recae sobre el controlador.
 #  Inicializacion del catalogo
 # ___________________________________________________
 def newAnalyzer():
-    analyzer=model.newAnalyzer()
-    return analyzer
+    bikes=model.newAnalyzer()
+    return bikes
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
-def loadTrips(analyzer):
+def loadTrips(bikes):
     for filename in cf.file_dir(cf.data_dir):    
         if filename.endswith('.csv'):
             print('Cargando archivo: ' + filename)
             loadFile(analyzer, filename)
     return analyzer
 
-def loadFile(analyzer, tripfile):
+def loadFile(bikes, tripfile):
     """
     """
     tripfile = cf.data_dir + tripfile
     input_file = csv.DictReader(open(tripfile, encoding="utf-8"),
                                 delimiter=",")
     for trip in input_file:
-        model.addTrip(analyzer, trip)
-    return analyzer
+        model.addTrip(bikes, trip)
+    return bikes
 
 # ___________________________________________________
 #  Funciones para consultas

@@ -42,30 +42,34 @@ de creacion y consulta sobre las estructuras de datos.
 #                       API
 # -----------------------------------------------------
 def newAnalyzer():
+    bikes = {}
     bikes["grafo"]=gr.newGraph(datastructure="AFJ_LIST",
                             directed=True,
-                            size=1000
-                            comparefunction=comareStations)
+                            size=1000,
+                            comparefunction=compareStations)
 
 # Funciones para agregar informacion al grafo
-def addTrip(analyzer,trip):
-    origen=trip["'start station id"]
-    duration=trip["'end station id"]
-    daration=int((trip['tripduration']))
-    addStation(analyzer, origin)
-    addStation(analyzer, destination)
-    addConnection(analyzer, origin, destination, duration)
-def addStation(analyzer,stationid):
-    if not gr.containsVertex(analyzer["grafo"],stationid):
-        gr.insertVertex(analyzer["grafo"],stationid)
-    return analyzer
-def addConnection(analyzer, origin , destination , duration):
-    edge=gr.getEdge(analyzer["grafo"],origin,destination)
+def addTrip(bikes,trip):
+    origin=trip["start station id"]
+    destination=trip["end station id"]
+    duration=int((trip['tripduration']))
+    addStation(bikes, origin)
+    addStation(bikes, destination)
+    addConnection(bikes, origin, destination, duration)
+
+def addStation(bikes,stationid):
+    if not gr.containsVertex(bikes["grafo"],stationid):
+        gr.insertVertex(bikes["grafo"],stationid)
+    return bikes
+
+def addConnection(bikes, origin , destination , duration):
+    edge=gr.getEdge(bikes["grafo"],origin,destination)
     if edge is None:
-        gr.addEdge(analyzer["grafo"],origin,destination,duration)
+        gr.addEdge(bikes["grafo"],origin,destination,duration)
     else:
         initial=edge["weight"]
         edge["weight"]=((int(intitial)+int(duration))/2)
+    return bikes
     
 
 # ==============================
@@ -79,3 +83,16 @@ def addConnection(analyzer, origin , destination , duration):
 # ==============================
 # Funciones de Comparacion
 # ==============================
+
+def compareStations(stop, keyvaluestop):
+    """
+    Compara dos estaciones
+    """
+    stopcode = keyvaluestop['key']
+    if (stop == stopcode):
+        return 0
+    elif (stop > stopcode):
+        return 1
+    else:
+        return -1
+

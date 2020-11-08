@@ -43,11 +43,66 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
+BikesFiles = "201801-1-citibike-tripdata.csv"
+initialStation = None
+recursionLimit = 20000
 
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
 
+def printMenu():
+    print("\n")
+    print("*******************************************")
+    print("Bienvenido al servicio de consulta de CitiBikes\nEstas son las consultas que puede realizar:\n")
+    print("1- Inicializar Analizador")
+    print("2- Cargar información de rutas")
+    print("3- Calcular componentes conectados")
+    print("4- Establecer parada base:")
+    print("5- Requerimiento x ")
+    print("6- Requerimiento y ")
+    print("7- Requerimiento z ")
+    print("0- Salir")
+    print("*******************************************")
+
+
+def optionTwo():
+    print("\nCargando información de rutas de citibikes ....")
+    controller.loadFile(cont, BikesFiles)
+    """numedges = controller.totalConnections(cont)
+    numvertex = controller.totalStops(cont)
+    print('Numero de vertices: ' + str(numvertex))
+    print('Numero de arcos: ' + str(numedges))"""
+    print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
+    sys.setrecursionlimit(recursionLimit)
+    print('El limite de recursion se ajusta a: ' + str(recursionLimit))
+
+
+def optionThree():
+    print('El número de componentes conectados es: ' +
+          str(controller.connectedComponents(cont)))
+
+
 """
 Menu principal
 """
+while True:
+    printMenu()
+    inputs = input('Seleccione una opción para continuar\n>')
+
+    if int(inputs[0]) == 1:
+        print("\nInicializando....")
+        # cont es el controlador que se usará de acá en adelante
+        cont = controller.newAnalyzer()
+
+    elif int(inputs[0]) == 2:
+        executiontime = timeit.timeit(optionTwo, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 3:
+        executiontime = timeit.timeit(optionThree, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    else:
+        sys.exit(0)
+sys.exit(0)
