@@ -51,19 +51,30 @@ def loadTrips(bikes):
     for filename in cf.file_dir(cf.data_dir):    
         if filename.endswith('.csv'):
             print('Cargando archivo: ' + filename)
-            loadFile(analyzer, filename)
-    return analyzer
+            loadFile(bikes, filename)
+    return bikes
 
 def loadFile(bikes, tripfile):
     """
     """
+    total_trips = 0
     tripfile = cf.data_dir + tripfile
     input_file = csv.DictReader(open(tripfile, encoding="utf-8"),
                                 delimiter=",")
     for trip in input_file:
         model.addTrip(bikes, trip)
-    return bikes
+        total_trips += 1 
+    return [bikes,total_trips]
 
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+
+def numero_SCC(bikes):
+    return model.numSCC(bikes)
+
+def totalStations(bikes):
+    return model.totalStations(bikes)
+
+def totalConnections(bikes):
+    return model.totalConnections(bikes)

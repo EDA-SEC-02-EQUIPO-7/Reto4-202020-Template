@@ -32,6 +32,7 @@ from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
 assert config
+from DISClib.Algorithms.Graphs import scc
 
 """
 En este archivo definimos los TADs que vamos a usar y las operaciones
@@ -42,17 +43,22 @@ de creacion y consulta sobre las estructuras de datos.
 #                       API
 # -----------------------------------------------------
 def newAnalyzer():
-    bikes = {}
-    bikes["grafo"]=gr.newGraph(datastructure="AFJ_LIST",
+    bikes = {
+        "Stations":None,
+        "Trips":None,
+        "grafo": None
+    }
+    bikes["grafo"]=gr.newGraph(datastructure="ADJ_LIST",
                             directed=True,
                             size=1000,
                             comparefunction=compareStations)
+    return bikes
 
 # Funciones para agregar informacion al grafo
 def addTrip(bikes,trip):
     origin=trip["start station id"]
     destination=trip["end station id"]
-    duration=int((trip['tripduration']))
+    duration=int(trip['tripduration'])
     addStation(bikes, origin)
     addStation(bikes, destination)
     addConnection(bikes, origin, destination, duration)
@@ -67,14 +73,32 @@ def addConnection(bikes, origin , destination , duration):
     if edge is None:
         gr.addEdge(bikes["grafo"],origin,destination,duration)
     else:
-        initial=edge["weight"]
-        edge["weight"]=((int(intitial)+int(duration))/2)
+        initial =edge["weight"]
+        edge["weight"]=((int(initial)+int(duration))/2)
     return bikes
     
 
 # ==============================
 # Funciones de consulta
 # ==============================
+
+def numSCC(grafo):
+    sc = scc.KosarajuSCC(grafo)
+    return scc.connectedComponents(sc)
+
+
+def totalStations(bikes):
+    """
+    Retorna el total de estaciones (vertices) del grafo
+    """
+    return gr.numVertices(bikes["grafo"])
+
+
+def totalConnections(bikes):
+    """
+    Retorna el total arcos del grafo
+    """
+    return gr.numEdges(bikes["grafo"])
 
 # ==============================
 # Funciones Helper

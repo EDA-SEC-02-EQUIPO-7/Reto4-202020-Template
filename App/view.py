@@ -43,7 +43,7 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
-BikesFiles = "201801-1-citibike-tripdata.csv"
+BikesFiles = "201801-4-citibike-tripdata.csv"
 initialStation = None
 recursionLimit = 20000
 
@@ -68,24 +68,19 @@ def printMenu():
 
 def optionTwo():
     print("\nCargando información de rutas de citibikes ....")
-    controller.loadFile(cont, BikesFiles)
-    """numedges = controller.totalConnections(cont)
-    numvertex = controller.totalStops(cont)
-    print('Numero de vertices: ' + str(numvertex))
-    print('Numero de arcos: ' + str(numedges))"""
-    print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
-    sys.setrecursionlimit(recursionLimit)
-    print('El limite de recursion se ajusta a: ' + str(recursionLimit))
+    total_trips = (controller.loadFile(cont, BikesFiles))[1]
+    print ("El nuemro de componentes fuertemente Conectados es {}".format(controller.numero_SCC(cont["grafo"])))
+    print ("El numero de Estaciones cargadas es {}".format(controller.totalStations(cont)))
+    print ("El numero Conecciones cargadas es {}".format(controller.totalConnections(cont)))
+    print ("El numero de viajes cargados es de {} ".format(total_trips))
 
 
 def optionThree():
     print('El número de componentes conectados es: ' +
           str(controller.connectedComponents(cont)))
 
+#Menu principal
 
-"""
-Menu principal
-"""
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n>')
@@ -98,6 +93,7 @@ while True:
     elif int(inputs[0]) == 2:
         executiontime = timeit.timeit(optionTwo, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
+        optionTwo()
 
     elif int(inputs[0]) == 3:
         executiontime = timeit.timeit(optionThree, number=1)
