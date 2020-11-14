@@ -43,7 +43,7 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
-BikesFiles = "201801-4-citibike-tripdata.csv"
+BikesFiles = "201801-3-citibike-tripdata.csv"
 initialStation = None
 recursionLimit = 20000
 
@@ -57,7 +57,7 @@ def printMenu():
     print("Bienvenido al servicio de consulta de CitiBikes\nEstas son las consultas que puede realizar:\n")
     print("1- Inicializar Analizador")
     print("2- Cargar información de rutas")
-    print("3- Calcular componentes conectados")
+    print("3- Consultar si dos vertices pertenecen a un mismo cluster (Requerimiento 1)")
     print("4- Establecer parada base:")
     print("5- Requerimiento x ")
     print("6- Requerimiento y ")
@@ -73,11 +73,36 @@ def optionTwo():
     print ("El numero de Estaciones cargadas es {}".format(controller.totalStations(cont)))
     print ("El numero Conecciones cargadas es {}".format(controller.totalConnections(cont)))
     print ("El numero de viajes cargados es de {} ".format(total_trips))
-
+    
 
 def optionThree():
-    print('El número de componentes conectados es: ' +
-          str(controller.connectedComponents(cont)))
+    #Determinar si dos estaciones pertenecen a un mismo cluster
+    print ("\nIngrese el nombre de las dos estaciones que desea consultar:")
+    Vertice_A = input("Nombre de la estacion #1: ")
+    Vertice_B = input("Nombre de la estacion #2: ")
+    SameCluster = controller.SameCluster(cont["grafo"], Vertice_A, Vertice_B)
+    if SameCluster:
+        print ("Las estaciones {} y {} pertenecen al mismo cluster".format(Vertice_A,Vertice_B))
+    else: 
+        print ("Las estaciones {} y {} NO pertenecen al mismo cluster".format(Vertice_A,Vertice_B))
+
+def optionFour():
+    
+    verticeCentral = input ("Ingrese la estación para la cual desea realizar la consulta: ")
+    controller.minimumCostPaths(cont, verticeCentral)
+    listaAdyacentes = controller.ListaAdyacentes(cont, verticeCentral)
+    controller.minimumCostPath(cont, verticeCentral)
+
+    """path = controller.minimumCostPath(cont, verticeCentral)
+    if path is not None:
+        pathlen = stack.size(path)
+        print('El camino es de longitud: ' + str(pathlen))
+        while (not stack.isEmpty(path)):
+            stop = stack.pop(path)
+            print(stop)"""
+    
+
+    
 
 #Menu principal
 
@@ -93,11 +118,17 @@ while True:
     elif int(inputs[0]) == 2:
         executiontime = timeit.timeit(optionTwo, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
-        optionTwo()
+        #optionTwo()
 
     elif int(inputs[0]) == 3:
         executiontime = timeit.timeit(optionThree, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
+
+    
+    elif int(inputs[0]) == 4:
+        executiontime = timeit.timeit(optionFour, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
 
     else:
         sys.exit(0)

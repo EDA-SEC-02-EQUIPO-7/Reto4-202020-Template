@@ -33,6 +33,7 @@ from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
 assert config
 from DISClib.Algorithms.Graphs import scc
+from DISClib.ADT import stack
 
 """
 En este archivo definimos los TADs que vamos a usar y las operaciones
@@ -46,7 +47,8 @@ def newAnalyzer():
     bikes = {
         "Stations":None,
         "Trips":None,
-        "grafo": None
+        "grafo": None,
+        'paths': None
     }
     bikes["grafo"]=gr.newGraph(datastructure="ADJ_LIST",
                             directed=True,
@@ -79,12 +81,76 @@ def addConnection(bikes, origin , destination , duration):
     
 
 # ==============================
+# Funciones de requerimientos
+# ==============================
+
+
+#Requerimiento 2
+
+
+def minimumCostPaths(bikes, initialStation):
+    """
+    Calcula los caminos de costo mínimo desde la estacion initialStation
+    a todos los demas vertices del grafo
+    """
+    bikes['paths'] = djk.Dijkstra(bikes['grafo'], initialStation)
+    return bikes
+
+def ListaAdyacentes (bikes, vertice):
+
+    #consulta de lista de adyacentes al vertice problema
+    ListaCompleta = gr.adjacents(bikes['grafo'], vertice)
+
+    lstiterator=it.newIterator(ListaCompleta)
+    conteoCaminos = 0
+    while it.hasNext(lstiterator):
+        eachaStation=it.next(lstiterator)
+        
+        existeCaminoRegreso = djk.hasPathTo(eachaStation, vertice)
+        print (existeCaminoRegreso)
+        #conteoCaminos += 1
+        #print (conteoCaminos)
+
+        #a partir de la lista de posibles caminos, se calcula la ruta a tomar en cada caso
+"""
+        path = minimumCostPath(bikes, vertice)
+        if path is not None:
+            pathlen = stack.size(path)
+            print('El camino es de longitud: ' + str(pathlen))
+        while (not stack.isEmpty(path)):
+            stop = stack.pop(path)
+            print(stop)
+"""
+
+def minimumCostPath(bikes, vertice):
+    """
+    Retorna el camino de costo minimo entre la estacion de inicio
+    y la estacion destino
+    Se debe ejecutar primero la funcion minimumCostPaths
+    """
+    path = djk.pathTo(bikes['paths'], vertice)
+    return path
+
+        
+
+
+
+
+
+
+# ==============================
 # Funciones de consulta
 # ==============================
+
 
 def numSCC(grafo):
     sc = scc.KosarajuSCC(grafo)
     return scc.connectedComponents(sc)
+
+def SameCluster (grafo, VerticeA, VerticeB):
+    sc = scc.KosarajuSCC(grafo)
+    #print (sc["idscc"])
+    return scc.stronglyConnected(sc, VerticeA, VerticeB)
 
 
 def totalStations(bikes):

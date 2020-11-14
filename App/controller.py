@@ -70,11 +70,41 @@ def loadFile(bikes, tripfile):
 #  Funciones para consultas
 # ___________________________________________________
 
+
 def numero_SCC(bikes):
     return model.numSCC(bikes)
+
+def SameCluster (bikes, VerticeA, VerticeB):
+    return model.SameCluster(bikes, VerticeA, VerticeB)
 
 def totalStations(bikes):
     return model.totalStations(bikes)
 
 def totalConnections(bikes):
     return model.totalConnections(bikes)
+
+
+
+
+
+
+
+
+
+def minimumCostPaths(analyzer, initialStation):
+    """
+    Calcula todos los caminos de costo minimo de initialStation a todas
+    las otras estaciones del sistema
+    """
+    return model.minimumCostPaths(analyzer, initialStation)
+
+
+def ListaAdyacentes (grafo, vertice):
+    return model.ListaAdyacentes(grafo, vertice)
+
+
+def minimumCostPath(analyzer, destStation):
+    """
+    Retorna el camino de costo minimo desde initialStation a destStation
+    """
+    return model.minimumCostPath(analyzer, destStation)
