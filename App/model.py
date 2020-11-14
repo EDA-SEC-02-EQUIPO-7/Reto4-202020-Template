@@ -96,6 +96,7 @@ def minimumCostPaths(bikes, initialStation):
     bikes['paths'] = djk.Dijkstra(bikes['grafo'], initialStation)
     return bikes
 
+
 def ListaAdyacentes (bikes, vertice):
 
     #consulta de lista de adyacentes al vertice problema
