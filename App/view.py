@@ -91,7 +91,7 @@ def optionFour():
     verticeCentral = input ("Ingrese la estación para la cual desea realizar la consulta: ")
     controller.minimumCostPaths(cont, verticeCentral)
     listaAdyacentes = controller.ListaAdyacentes(cont, verticeCentral)
-    controller.minimumCostPath(cont, verticeCentral)
+    #controller.minimumCostPath(cont, verticeCentral)
 
     """path = controller.minimumCostPath(cont, verticeCentral)
     if path is not None:

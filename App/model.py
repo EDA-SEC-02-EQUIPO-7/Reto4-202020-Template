@@ -34,6 +34,8 @@ from DISClib.Utils import error as error
 assert config
 from DISClib.Algorithms.Graphs import scc
 from DISClib.ADT import stack
+from DISClib.Algorithms.Graphs import dfs
+from DISClib.Algorithms.Graphs import bfs
 
 """
 En este archivo definimos los TADs que vamos a usar y las operaciones
@@ -97,31 +99,91 @@ def minimumCostPaths(bikes, initialStation):
     return bikes
 
 
-def ListaAdyacentes (bikes, vertice):
+def BreadhtFisrtSearch(graph, source):
+    bfs.BreadhtFisrtSearch(graph, source)
+
+def BFS_PathTo(search, vertex):
+    bfs.pathTo(search, vertex)
+
+
+
+def ConsultaRutasCirculares (bikes, vertice):
 
     #consulta de lista de adyacentes al vertice problema
-    ListaCompleta = gr.adjacents(bikes['grafo'], vertice)
+    #AplicaDijsktra = minimumCostPaths(bikes, vertice)
 
+
+    ListaCompleta = ListaAdyacentes(bikes, vertice)
     lstiterator=it.newIterator(ListaCompleta)
     conteoCaminos = 0
+
+
+    #search = minimumCostPaths(bikes, vertice)
+
+    #search = DepthFirstSearch(bikes["grafo"], vertice)
+    
+    """
+    while (not stack.isEmpty(pilaDFS)): 
+
+        stop = stack.pop(pilaDFS)
+        #TimpoPorAdyacentes += float(stop["weight"])
+        print(stop)
+        """
+
     while it.hasNext(lstiterator):
         eachaStation=it.next(lstiterator)
-        
-        existeCaminoRegreso = djk.hasPathTo(eachaStation, vertice)
-        print (existeCaminoRegreso)
-        #conteoCaminos += 1
-        #print (conteoCaminos)
 
-        #a partir de la lista de posibles caminos, se calcula la ruta a tomar en cada caso
-"""
-        path = minimumCostPath(bikes, vertice)
-        if path is not None:
-            pathlen = stack.size(path)
-            print('El camino es de longitud: ' + str(pathlen))
-        while (not stack.isEmpty(path)):
-            stop = stack.pop(path)
-            print(stop)
-"""
+
+
+        minimumCostPaths(bikes, vertice)
+        FirsPath = minimumCostPath(bikes, eachaStation)
+        Firststop = stack.pop(FirsPath)                
+
+        
+        minimumCostPaths(bikes, eachaStation)
+        SecondPath = minimumCostPath(bikes, vertice)
+
+        
+        """if SecondPath is not None:
+            stack.push(SecondPath, Firststop)
+            stop = stack.pop(SecondPath)
+            TimpoPorAdyacentes += float(stop["weight"])
+            print(stop)"""
+        
+
+
+
+        if SecondPath is not None:
+            stack.push(SecondPath, Firststop)
+            conteoCaminos += 1
+            pathlen = stack.size(SecondPath)
+            print('El camino encontrado tiene en total {} estaciones: ' .format(str(pathlen + 1)))
+
+            TiempoTotalCadaRecorrido = 0   
+            TimpoPorAdyacentes = 0         
+            #print (Firststop)
+            while (not stack.isEmpty(SecondPath)): 
+
+                stop = stack.pop(SecondPath)
+                TimpoPorAdyacentes += float(stop["weight"])
+                print(stop)
+
+            TiempoTotalCadaRecorrido = float(Firststop["weight"]) + TimpoPorAdyacentes + (pathlen*20*60)
+            TiempoTotalCadaRecorrido = (round((TiempoTotalCadaRecorrido/60),2))
+            print ("El tiempo total del recorrido, incluyendo tiempo de los trayectos y un tiempo aproximado de 20 minutos de recorrido turístico en cada estacion, es de {} minutos: " .format(str(TiempoTotalCadaRecorrido)))
+
+            print ("\n")
+
+
+    print ("el total de caminos encontrados fue de: " + str (conteoCaminos))
+
+    
+
+    
+    
+
+    
+
 
 def minimumCostPath(bikes, vertice):
     """
@@ -132,9 +194,25 @@ def minimumCostPath(bikes, vertice):
     path = djk.pathTo(bikes['paths'], vertice)
     return path
 
+
+def hasPath(bikes, vertice):
+    """
+    Indica si existe un camino desde la estacion inicial a la estación destino
+    Se debe ejecutar primero la funcion minimumCostPaths
+    """
+    return djk.hasPathTo(bikes['paths'], vertice)
+
         
+def ListaAdyacentes (bikes, vertice):
 
+    #consulta de lista de adyacentes al vertice problema
+    return gr.adjacents(bikes['grafo'], vertice)
 
+def DepthFirstSearch(graph, source):
+    return dfs.DepthFirstSearch(graph, source)
+
+def DFS_pathTo(search, vertex):
+    return dfs.pathTo(search, vertex)
 
 
 
@@ -166,6 +244,11 @@ def totalConnections(bikes):
     Retorna el total arcos del grafo
     """
     return gr.numEdges(bikes["grafo"])
+
+
+
+
+
 
 # ==============================
 # Funciones Helper
