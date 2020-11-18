@@ -107,82 +107,46 @@ def BFS_PathTo(search, vertex):
 
 
 
-def ConsultaRutasCirculares (bikes, vertice):
-
-    #consulta de lista de adyacentes al vertice problema
-    #AplicaDijsktra = minimumCostPaths(bikes, vertice)
+def ConsultaRutasCirculares (bikes, vertice, inferior, superior):
 
 
     ListaCompleta = ListaAdyacentes(bikes, vertice)
     lstiterator=it.newIterator(ListaCompleta)
     conteoCaminos = 0
 
+    stackfinal = stack.newStack()
 
-    #search = minimumCostPaths(bikes, vertice)
-
-    #search = DepthFirstSearch(bikes["grafo"], vertice)
     
-    """
-    while (not stack.isEmpty(pilaDFS)): 
-
-        stop = stack.pop(pilaDFS)
-        #TimpoPorAdyacentes += float(stop["weight"])
-        print(stop)
-        """
-
     while it.hasNext(lstiterator):
         eachaStation=it.next(lstiterator)
 
+        primero = minimumCostPaths(bikes, vertice)
+        primerpeso = distTo(primero, eachaStation)
+        FirsPath = minimumCostPath(primero, eachaStation)
+        Firststop = stack.pop(FirsPath)
 
 
-        minimumCostPaths(bikes, vertice)
-        FirsPath = minimumCostPath(bikes, eachaStation)
-        Firststop = stack.pop(FirsPath)                
-
-        
-        minimumCostPaths(bikes, eachaStation)
+        segundo = minimumCostPaths(bikes, eachaStation)
         SecondPath = minimumCostPath(bikes, vertice)
+        if SecondPath:
+            
+            pesoconjunto = (distTo(segundo, vertice)) + primerpeso
 
-        
-        """if SecondPath is not None:
+            
             stack.push(SecondPath, Firststop)
-            stop = stack.pop(SecondPath)
-            TimpoPorAdyacentes += float(stop["weight"])
-            print(stop)"""
-        
 
-
-
-        if SecondPath is not None:
-            stack.push(SecondPath, Firststop)
-            conteoCaminos += 1
             pathlen = stack.size(SecondPath)
-            print('El camino encontrado tiene en total {} estaciones: ' .format(str(pathlen + 1)))
-
-            TiempoTotalCadaRecorrido = 0   
-            TimpoPorAdyacentes = 0         
-            #print (Firststop)
-            while (not stack.isEmpty(SecondPath)): 
-
-                stop = stack.pop(SecondPath)
-                TimpoPorAdyacentes += float(stop["weight"])
-                print(stop)
-
-            TiempoTotalCadaRecorrido = float(Firststop["weight"]) + TimpoPorAdyacentes + (pathlen*20*60)
-            TiempoTotalCadaRecorrido = (round((TiempoTotalCadaRecorrido/60),2))
-            print ("El tiempo total del recorrido, incluyendo tiempo de los trayectos y un tiempo aproximado de 20 minutos de recorrido turístico en cada estacion, es de {} minutos: " .format(str(TiempoTotalCadaRecorrido)))
-
-            print ("\n")
-
-
-    print ("el total de caminos encontrados fue de: " + str (conteoCaminos))
+            pesofinal = pesoconjunto + (pathlen*20*60)
+                
+            if inferior < pesofinal < superior:
+                
+                conteoCaminos += 1
+                SecondPath["PesoTotal"]=pesofinal
+                stack.push(stackfinal, SecondPath)
 
     
+    return conteoCaminos, stackfinal
 
-    
-    
-
-    
 
 
 def minimumCostPath(bikes, vertice):
@@ -201,6 +165,9 @@ def hasPath(bikes, vertice):
     Se debe ejecutar primero la funcion minimumCostPaths
     """
     return djk.hasPathTo(bikes['paths'], vertice)
+
+def distTo(search, vertex):
+    return djk.distTo(search['paths'], vertex)
 
         
 def ListaAdyacentes (bikes, vertice):

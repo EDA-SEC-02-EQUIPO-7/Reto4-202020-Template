@@ -99,8 +99,8 @@ def minimumCostPaths(analyzer, initialStation):
     return model.minimumCostPaths(analyzer, initialStation)
 
 
-def ListaAdyacentes (analyzer, vertice):
-    return model.ConsultaRutasCirculares(analyzer, vertice)
+def ListaAdyacentes (analyzer, vertice, inferior, superior):
+    return model.ConsultaRutasCirculares(analyzer, vertice, inferior, superior)
 
 
 def minimumCostPath(analyzer, destStation):

@@ -43,7 +43,7 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
-BikesFiles = "201801-3-citibike-tripdata.csv"
+BikesFiles = "201801-4-citibike-tripdata.csv"
 initialStation = None
 recursionLimit = 20000
 
@@ -58,7 +58,7 @@ def printMenu():
     print("1- Inicializar Analizador")
     print("2- Cargar información de rutas")
     print("3- Consultar si dos vertices pertenecen a un mismo cluster (Requerimiento 1)")
-    print("4- Establecer parada base:")
+    print("4- Consultar rutas cíclicas (Ejemplo 3661) ")
     print("5- Requerimiento x ")
     print("6- Requerimiento y ")
     print("7- Requerimiento z ")
@@ -89,17 +89,24 @@ def optionThree():
 def optionFour():
     
     verticeCentral = input ("Ingrese la estación para la cual desea realizar la consulta: ")
-    controller.minimumCostPaths(cont, verticeCentral)
-    listaAdyacentes = controller.ListaAdyacentes(cont, verticeCentral)
-    #controller.minimumCostPath(cont, verticeCentral)
+    LimiteInferior = (int (input("Ingrese el limite inferior del rango a consultar (Ej 100): "))) * 60
+    LimiteSuperior = (int (input("Ingrese el limite superior del rango a consultar (Ej 120): "))) * 60
+    
+    listaAdyacentes = controller.ListaAdyacentes(cont, verticeCentral, LimiteInferior, LimiteSuperior)
+    print ("\nSe encontraron en total {} rutas cíclicas:\n " .format(listaAdyacentes[0]))
+    
 
-    """path = controller.minimumCostPath(cont, verticeCentral)
-    if path is not None:
-        pathlen = stack.size(path)
-        print('El camino es de longitud: ' + str(pathlen))
-        while (not stack.isEmpty(path)):
-            stop = stack.pop(path)
-            print(stop)"""
+    while (not stack.isEmpty(listaAdyacentes[1])): 
+        stop = stack.pop(listaAdyacentes[1])
+        print ("Esta ruta tiene en total {} estaciones, teniendo en cuenta un tiempo de 20 minutos por estacion sumado al tiempo estimado de recorrido, este camino tarda en total {} minutos" .format(str(stack.size(stop)), (round((stop["PesoTotal"]/60), 2))))
+        while (not stack.isEmpty(stop)):
+            stopDOS = stack.pop(stop)
+            print("-> Parte de la estacion {}, hasta la estación {} y tarda {} minutos en el trayecto. " .format( stopDOS['vertexA'],stopDOS['vertexB'], round((stopDOS['weight']/60), 2)))
+        print ("\n")
+
+
+
+
     
 
     
