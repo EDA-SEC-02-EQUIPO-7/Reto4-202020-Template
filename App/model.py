@@ -24,6 +24,7 @@
  *
  """
 import config
+from DISClib.ADT import indexminpq as iminpq
 from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
@@ -57,9 +58,17 @@ def newAnalyzer():
                             directed=True,
                             size=1000,
                             comparefunction=compareStations)
+    bikes["topsalida"]=iminpq.newIndexMinPQ(
+                                  cmpfunction=cmpimin
+                                  )
+    bikes["topllegada"]=iminpq.newIndexMinPQ(
+                                  cmpfunction=cmpimin
+                                   )
+    bikes["topuso"]=iminpq.newIndexMinPQ(
+                                  cmpfunction=cmpimin
+                                   )
     return bikes
 
-# Funciones para agregar informacion al grafo
 def addTrip(bikes,trip):
     origin=trip["start station id"]
     destination=trip["end station id"]
@@ -71,6 +80,9 @@ def addTrip(bikes,trip):
 def addStation(bikes,stationid):
     if not gr.containsVertex(bikes["grafo"],stationid):
         gr.insertVertex(bikes["grafo"],stationid)
+        iminpq.insert(bikes["topsalida"],stationid,1)
+        iminpq.insert(bikes["topllegada"],stationid,1)
+        iminpq.insert(bikes["topuso"],stationid,1)
     return bikes
 
 def addConnection(bikes, origin , destination , duration):
@@ -80,7 +92,23 @@ def addConnection(bikes, origin , destination , duration):
     else:
         initial =edge["weight"]
         edge["weight"]=((int(initial)+int(duration))/2)
+    llegada=gr.indegree(bikes["grafo"],destination)
+    salida=gr.outdegree(bikes["grafo"],origin)
+    llegadad=gr.indegree(bikes["grafo"],destination)
+    salidad=salida=gr.outdegree(bikes["grafo"],origin)
+    oruse=salida+llegadad
+    desuse=llegada+salidad
+    oruseinv=1/oruse
+    desuseinv=1/desuse
+    llegadainv=1/llegada
+    salidainv=1/salida
+    iminpq.decreaseKey(bikes["topuso"], destination,desuseinv)
+    iminpq.decreaseKey(bikes["topuso"], origin,oruseinv)
+    iminpq.decreaseKey(bikes["topllegada"], destination,llegadainv)
+    iminpq.decreaseKey(bikes["topsalida"], origin, salidainv)
     return bikes
+
+
     
 
 # ==============================
@@ -340,4 +368,14 @@ def compareStations(stop, keyvaluestop):
         return 1
     else:
         return -1
-
+def cmpimin(value1, value2):
+    """
+    Compara dos estaciones
+    """
+    value2 = value2['key']
+    if (value1 == value2):
+        return 0
+    elif (value1 > value2):
+        return 1
+    else:
+        return -1
