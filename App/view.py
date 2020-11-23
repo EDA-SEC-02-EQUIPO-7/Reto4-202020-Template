@@ -29,6 +29,7 @@ import sys
 import config
 from App import controller
 from DISClib.ADT import stack
+from DISClib.ADT import queue
 import timeit
 assert config
 
@@ -58,7 +59,7 @@ def printMenu():
     print("1- Inicializar Analizador")
     print("2- Cargar información de rutas")
     print("3- Consultar si dos vertices pertenecen a un mismo cluster (Requerimiento 1)")
-    print("4- Consultar rutas cíclicas (Ejemplo 3661) ")
+    print("4- Consultar rutas cíclicas  ")
     print("5- Requerimiento x ")
     print("6- Requerimiento y ")
     print("7- Requerimiento z ")
@@ -88,14 +89,32 @@ def optionThree():
 
 def optionFour():
     
-    verticeCentral = input ("Ingrese la estación para la cual desea realizar la consulta: ")
-    LimiteInferior = (int (input("Ingrese el limite inferior del rango a consultar (Ej 100): "))) * 60
-    LimiteSuperior = (int (input("Ingrese el limite superior del rango a consultar (Ej 120): "))) * 60
+    verticeCentral = input ("Ingrese la estación para la cual desea realizar la consulta (Ejemplo 3661, 477): ")
+    LimiteInferior = (int (input("Ingrese el limite inferior del rango a consultar (Ej 120): "))) * 60
+    LimiteSuperior = (int (input("Ingrese el limite superior del rango a consultar (Ej 240): "))) * 60
     
     listaAdyacentes = controller.ListaAdyacentes(cont, verticeCentral, LimiteInferior, LimiteSuperior)
+
     print ("\nSe encontraron en total {} rutas cíclicas:\n " .format(listaAdyacentes[0]))
     
+    while (not stack.isEmpty(listaAdyacentes[1])): 
+        stop = stack.pop(listaAdyacentes[1])
+        print ("Esta ruta tarda en total {} minutos, tiene {} estaciones, teniendo en cuenta un tiempo de 20 minutos por estacion. " .format((round((stop["PesoPorRuta"]/60), 2)), str(queue.size(stop)), ))
+        while stop and (not queue.isEmpty(stop)):
+            stopDOS = queue.dequeue(stop)
+            print("-> Parte de la estacion {}, hasta la estación {} y tarda {} minutos en el trayecto. " .format( stopDOS['vertexA'],stopDOS['vertexB'], round((stopDOS['weight']/60), 2)))
+        print ("\n")
 
+
+    #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+    """
+    
+    print ("\nSe encontraron en total {} rutas cíclicas:\n " .format(listaAdyacentes[0]))
+    
+    
     while (not stack.isEmpty(listaAdyacentes[1])): 
         stop = stack.pop(listaAdyacentes[1])
         print ("Esta ruta tiene en total {} estaciones, teniendo en cuenta un tiempo de 20 minutos por estacion sumado al tiempo estimado de recorrido, este camino tarda en total {} minutos" .format(str(stack.size(stop)), (round((stop["PesoTotal"]/60), 2))))
@@ -103,6 +122,11 @@ def optionFour():
             stopDOS = stack.pop(stop)
             print("-> Parte de la estacion {}, hasta la estación {} y tarda {} minutos en el trayecto. " .format( stopDOS['vertexA'],stopDOS['vertexB'], round((stopDOS['weight']/60), 2)))
         print ("\n")
+        """
+
+    #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
+    #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
+    #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
 
 
 

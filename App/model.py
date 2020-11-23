@@ -34,6 +34,7 @@ from DISClib.Utils import error as error
 assert config
 from DISClib.Algorithms.Graphs import scc
 from DISClib.ADT import stack
+from DISClib.ADT import queue
 from DISClib.Algorithms.Graphs import dfs
 from DISClib.Algorithms.Graphs import bfs
 
@@ -109,6 +110,55 @@ def BFS_PathTo(search, vertex):
 
 def ConsultaRutasCirculares (bikes, vertice, inferior, superior):
 
+    ListaCompleta = ListaAdyacentes(bikes, vertice)
+    lstiterator=it.newIterator(ListaCompleta)
+    conteoCaminos = 0
+
+    stackfinal = stack.newStack()
+    CadaRuta = queue.newQueue()
+    ConteoDeRutas = 0
+
+
+    while it.hasNext(lstiterator):
+        eachaStation=it.next(lstiterator)
+
+        primerRecorrido = getEdge(bikes['grafo'], vertice, eachaStation)
+
+        search = minimumCostPaths(bikes, eachaStation)
+        colados = minimumCostPath(bikes, vertice)
+
+        if colados and ((stack.size(colados))*60*20) < superior:
+            pesoporestaciones = (stack.size(colados))*60*20
+            pesocamino = 0
+            pesoTOTALdos = pesoporestaciones + pesocamino + primerRecorrido['weight']
+
+            CadaRuta = queue.newQueue()
+            queue.enqueue(CadaRuta, primerRecorrido)
+
+            while (not stack.isEmpty(colados)) and (pesoTOTALdos < superior):
+
+                stopDOS = stack.pop(colados)
+                pesoTOTALdos += stopDOS['weight']
+
+                queue.enqueue(CadaRuta, stopDOS)
+
+            
+            if inferior < pesoTOTALdos < superior and CadaRuta:
+                CadaRuta["PesoPorRuta"] = pesoTOTALdos
+                ConteoDeRutas += 1
+                stack.push(stackfinal, CadaRuta)
+        
+    return ConteoDeRutas, stackfinal
+
+    #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+    """
+    #Req 2 funcionando
+    #Req 2 funcionando
+    #Req 2 funcionando
+
 
     ListaCompleta = ListaAdyacentes(bikes, vertice)
     lstiterator=it.newIterator(ListaCompleta)
@@ -146,6 +196,57 @@ def ConsultaRutasCirculares (bikes, vertice, inferior, superior):
 
     
     return conteoCaminos, stackfinal
+    """
+
+
+    """
+    ListaCompleta = ListaAdyacentes(bikes, vertice)
+    lstiterator=it.newIterator(ListaCompleta)
+    conteoCaminos = 0
+
+    stackfinal = stack.newStack()
+    CadaRuta = queue.newQueue()
+    ConteoDeRutas = 0
+
+    colauno = stack.newStack()
+    stack.push(colauno, vertice)
+
+    while it.hasNext(lstiterator):
+        eachaStation=it.next(lstiterator)
+        search = DepthFirstSearch(bikes['grafo'], eachaStation)
+        colados = DFS_pathTo(search, vertice)
+
+        if colados and ((stack.size(colados))*60*20) < superior:
+            pesoporestaciones = (stack.size(colados))*60*20
+            pesocamino = 0
+            pesoTOTALdos = pesoporestaciones + pesocamino
+
+            CadaRuta = queue.newQueue()
+
+            while (not stack.isEmpty(colados)) and (pesoTOTALdos < superior):
+
+                stopuno = stack.pop(colauno)
+                stopDOS = stack.pop(colados)
+                cadacamino = getEdge(bikes['grafo'], stopuno, stopDOS)
+                
+                stack.push(colauno, stopDOS)
+                                
+                if cadacamino:
+                    pesoTOTALdos += cadacamino['weight']
+
+                    queue.enqueue(CadaRuta, cadacamino)
+
+            
+            if inferior < pesoTOTALdos < superior and CadaRuta:
+                CadaRuta["PesoPorRuta"] = pesoTOTALdos
+                ConteoDeRutas += 1
+                stack.push(stackfinal, CadaRuta)
+        
+    return ConteoDeRutas, stackfinal
+    """
+    #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
+    #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
+    #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
 
 
 
@@ -180,6 +281,9 @@ def DepthFirstSearch(graph, source):
 
 def DFS_pathTo(search, vertex):
     return dfs.pathTo(search, vertex)
+
+def getEdge(graph, vertexa, vertexb):
+    return gr.getEdge(graph, vertexa, vertexb)
 
 
 
