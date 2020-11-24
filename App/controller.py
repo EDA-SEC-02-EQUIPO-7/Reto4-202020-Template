@@ -86,7 +86,16 @@ def totalConnections(bikes):
 
 
 
-
+def requerimiento6(bikes,strlat,strlon,endlat,endlon):
+    strcoord={"lat":None,
+            "lon":None}
+    endcoord={"lat":None,
+            "lon":None}
+    strcoord["lat"]=(strlat)
+    strcoord["lon"]=(strlon)
+    endcoord["lat"]=(endlat)
+    endcoord["lon"]=(endlon)
+    return model.rutarecomendada(bikes,strcoord,endcoord)
 
 
 

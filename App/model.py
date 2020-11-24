@@ -24,7 +24,10 @@
  *
  """
 import config
+from DISClib.DataStructures import mapentry as me
+from math import radians, cos, sin, asin, sqrt ,degrees,atan2
 from DISClib.ADT import indexminpq as iminpq
+from DISClib.ADT import orderedmap as om
 from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
@@ -67,6 +70,8 @@ def newAnalyzer():
     bikes["topuso"]=iminpq.newIndexMinPQ(
                                   cmpfunction=cmpimin
                                    )
+    bikes["stationtree"]= om.newMap(omaptype='',
+                                      comparefunction=comparebycoord)
     return bikes
 
 def addTrip(bikes,trip):
@@ -76,7 +81,35 @@ def addTrip(bikes,trip):
     addStation(bikes, origin)
     addStation(bikes, destination)
     addConnection(bikes, origin, destination, duration)
+    updateCoordIndex(bikes["stationtree"],trip)
 
+def updateCoordIndex(map,trip):
+    occurredCoord ={"lat":float(trip["start station latitude"]),"lon":float(trip["start station longitude"]),"id":float(trip["start station id"])}
+    entry=om.get(map,occurredCoord)
+    if entry is None:
+        coordentry =newDataEntryBono(trip)
+        om.put(map,occurredCoord,coordentry)
+    else:
+        coordentry=me.getValue(entry)
+    addCoord(coordentry,trip)
+    occurredCoord ={"lat":float(trip["end station latitude"]),"lon":float(trip["end station longitude"]),"id":float(trip["end station id"])}
+    entry=om.get(map,occurredCoord)
+    if entry is None:
+        coordentry =newDataEntryBono(trip)
+        om.put(map,occurredCoord,coordentry)
+    else:
+        coordentry=me.getValue(entry)
+    addCoord(coordentry,trip)
+    return map
+
+def addCoord(coordentry,trip):
+    lst=coordentry["lst"]
+    lt.addLast(lst,trip)
+
+def newDataEntryBono(accident):
+    entry={"lst":None}
+    entry["lst"]=lt.newList("SINGLE_LINKED",comparebycoord)
+    return entry
 def addStation(bikes,stationid):
     if not gr.containsVertex(bikes["grafo"],stationid):
         gr.insertVertex(bikes["grafo"],stationid)
@@ -276,8 +309,40 @@ def ConsultaRutasCirculares (bikes, vertice, inferior, superior):
     #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
     #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
 
-
-
+def rutarecomendada(bikes,strcoord,endcoord):
+    rbt=bikes["stationtree"]
+    values={"list":None}
+    values["list"]=lt.newList('SINGLELINKED', rbt['cmpfunction'])
+    distance=0.01
+    while lt.size(values["list"])==0:
+        values= keyrange(rbt['root'], lat(-distance,float(strcoord["lat"])), lat(distance,float(strcoord["lat"])),values,strcoord,distance)
+        distance+=0.01
+    estacioninicio=str(int(lt.getElement(values["list"],1)["id"]))
+    values["list"]=lt.newList('SINGLELINKED', rbt['cmpfunction'])
+    distance=0.01
+    while lt.size(values["list"])==0:
+        values= keyrange(rbt['root'], lat(-distance,float(endcoord["lat"])), lat(distance,float(endcoord["lat"])),values,endcoord,distance)
+        distance+=0.01
+    estacionfinal=str(int(lt.getElement(values["list"],1)["id"]))
+    dijsktra=djk.Dijkstra(bikes["grafo"],estacioninicio)
+    if djk.hasPathTo(dijsktra,estacionfinal):
+        path=djk.pathTo(dijsktra,estacionfinal)
+        print(path)
+    else:
+        print("ñoquis")
+def keyrange(root,keylo ,keyhi,values,coord,distance):
+    if (root is not None):
+        y=float((root["key"]["lat"]))
+        z=float(root["key"]["lon"])
+        x=float(coord["lat"])
+        w=float(coord["lon"])
+        if (root["key"]["lat"] > keylo):
+            keyrange(root['left'], keylo, keyhi, values,coord,distance)
+        if (haversine(z,y,w,x)<=distance and root["key"]["lat"] > keylo and root["key"]["lat"] < keyhi):
+            lt.addLast(values["list"],root["key"]) 
+        if (root["key"]["lat"] < keyhi):
+            keyrange(root['right'], keylo, keyhi, values,coord,distance)
+    return values
 def minimumCostPath(bikes, vertice):
     """
     Retorna el camino de costo minimo entre la estacion de inicio
@@ -379,3 +444,32 @@ def cmpimin(value1, value2):
         return 1
     else:
         return -1
+def comparebycoord(coord1,coord2):
+    if coord1["lat"]==coord2["lat"]:
+        return 0
+    if coord1["lat"]>coord2["lat"]:
+        return 1
+    else:
+        return -1
+        
+def haversine(lon1, lat1, lon2, lat2):
+    lon1=radians(lon1)
+    lat1=radians(lat1)
+    lon2=radians(lon2)   
+    lat2=radians(lat2)
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 6371 
+    return c * r
+
+def lat(d,lat1):
+    R = 6371 #Radius of the Earth
+    brng =0 #Bearing is 90 degrees converted to radians.
+    lat1 =radians(lat1) #Current lat point converted to radians
+    lat2 = asin( sin(lat1)*cos(d/R) +
+         cos(lat1)*sin(d/R)*cos(brng))
+    
+    lat2 =degrees(lat2)
+    return lat2

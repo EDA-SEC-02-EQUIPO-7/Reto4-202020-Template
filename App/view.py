@@ -62,7 +62,7 @@ def printMenu():
     print("4- Consultar rutas cíclicas  ")
     print("5- Requerimiento x ")
     print("6- Requerimiento y ")
-    print("7- Requerimiento z ")
+    print("7- Requerimiento 6 ")
     print("0- Salir")
     print("*******************************************")
 
@@ -128,7 +128,12 @@ def optionFour():
     #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
     #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
 
-
+def optionseven():
+    strlat=input("Escriba la latitud de inicio")
+    strlon=input("Escriba la longitud de inicio")
+    endlat=input("Escriba la latitud de llegada")
+    endlon=input("Escriba la longitud de llegada")
+    res=controller.requerimiento6(cont,strlat,strlon,endlat,endlon)
 
 
     
@@ -158,6 +163,10 @@ while True:
     
     elif int(inputs[0]) == 4:
         executiontime = timeit.timeit(optionFour, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 7:
+        executiontime = timeit.timeit(optionseven, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 
 
