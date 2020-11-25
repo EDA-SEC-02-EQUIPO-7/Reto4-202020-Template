@@ -55,8 +55,8 @@ def newAnalyzer():
         "Stations":None,
         "Trips":None,
         "grafo": None,
-        'paths': None
-    }
+        'paths': None,
+        "table":None}
     bikes["grafo"]=gr.newGraph(datastructure="ADJ_LIST",
                             directed=True,
                             size=1000,
@@ -72,6 +72,16 @@ def newAnalyzer():
                                    )
     bikes["stationtree"]= om.newMap(omaptype='',
                                       comparefunction=comparebycoord)
+    bikes["tablesalida"]= m.newMap(maptype='',
+                                      comparefunction=compareIds)
+    bikes["tablellegada"]= m.newMap(maptype='',
+                                      comparefunction=compareIds)
+    bikes["mayoressalida"]=m.newMap(maptype='',
+                                      comparefunction=compareIds)
+    bikes["mayoresllegada"]=m.newMap(maptype='',
+                                      comparefunction=compareIds)
+    bikes["names"]=m.newMap(maptype='',
+                                      comparefunction=compareIds)
     return bikes
 
 def addTrip(bikes,trip):
@@ -82,6 +92,84 @@ def addTrip(bikes,trip):
     addStation(bikes, destination)
     addConnection(bikes, origin, destination, duration)
     updateCoordIndex(bikes["stationtree"],trip)
+    addidname(bikes["names"],trip)
+    age=changeyear(trip["birth year"])
+    exi=m.contains(bikes["tablesalida"],trip["start station id"])
+    if exi:
+        entry=m.get(bikes["tablesalida"],trip["start station id"])
+        ages=me.getValue(entry)
+        exi=m.contains(ages,age)
+        if exi:
+            entry=m.get(ages,age)
+            part=me.getValue(entry)
+            m.put(ages,age,part+1)
+        else:
+            m.put(ages,age,1)
+    else:
+        ages=m.newMap(maptype='',comparefunction=compareIds)
+        m.put(bikes["tablesalida"],trip["start station id"],ages)
+        entry=m.get(bikes["tablesalida"],trip["start station id"])
+        ages=me.getValue(entry)
+        m.put(ages,age,1)
+    entry=m.get(bikes["tablesalida"],trip["start station id"])
+    ages=me.getValue(entry)
+    cant=m.get(ages,age)
+    num=me.getValue(cant)
+    exi=m.contains(bikes["mayoressalida"],age)
+    if exi:
+        mayor=entry=m.get(bikes["mayoressalida"],age)
+        vertex=me.getValue(mayor)
+        numero=vertex["cantidad"]
+        if numero<num:
+            m.put(bikes["mayoressalida"],age,{"vertex":trip["start station id"],"cantidad":num})
+            entry=m.get(bikes["mayoressalida"],age)
+    else:
+        m.put(bikes["mayoressalida"],age,{"vertex":trip["start station id"],"cantidad":num})
+        entry=m.get(bikes["mayoressalida"],age)
+    
+    exi=m.contains(bikes["tablellegada"],trip["end station id"])
+    if exi:
+        entry=m.get(bikes["tablellegada"],trip["end station id"])
+        ages=me.getValue(entry)
+        exi=m.contains(ages,age)
+        if exi:
+            entry=m.get(ages,age)
+            part=me.getValue(entry)
+            m.put(ages,age,part+1)
+        else:
+            m.put(ages,age,1)
+    else:
+        ages=m.newMap(maptype='',comparefunction=compareIds)
+        m.put(bikes["tablellegada"],trip["end station id"],ages)
+        entry=m.get(bikes["tablellegada"],trip["end station id"])
+        ages=me.getValue(entry)
+        m.put(ages,age,1)
+    entry=m.get(bikes["tablellegada"],trip["end station id"])
+    ages=me.getValue(entry)
+    cant=m.get(ages,age)
+    num=me.getValue(cant)
+    exi=m.contains(bikes["mayoresllegada"],age)
+    if exi:
+        mayor=entry=m.get(bikes["mayoresllegada"],age)
+        vertex=me.getValue(mayor)
+        numero=vertex["cantidad"]
+        if numero<num:
+            m.put(bikes["mayoresllegada"],age,{"vertex":trip["end station id"],"cantidad":num})
+            entry=m.get(bikes["mayoresllegada"],age)
+    else:
+        m.put(bikes["mayoresllegada"],age,{"vertex":trip["end station id"],"cantidad":num})
+        entry=m.get(bikes["mayoresllegada"],age)
+    
+
+def addidname(map,trip):
+    exi=m.contains(map,trip["start station id"])
+    if exi ==False:
+        m.put(map,trip["start station id"],"start station name")
+    exi=m.contains(map,trip["end station id"])
+    if exi ==False:
+        m.put(map,trip["end station id"],"end station name")
+
+    
 
 def updateCoordIndex(map,trip):
     occurredCoord ={"lat":float(trip["start station latitude"]),"lon":float(trip["start station longitude"]),"id":float(trip["start station id"])}
@@ -131,12 +219,10 @@ def addConnection(bikes, origin , destination , duration):
     salidad=salida=gr.outdegree(bikes["grafo"],origin)
     oruse=salida+llegadad
     desuse=llegada+salidad
-    oruseinv=1/oruse
-    desuseinv=1/desuse
     llegadainv=1/llegada
     salidainv=1/salida
-    iminpq.decreaseKey(bikes["topuso"], destination,desuseinv)
-    iminpq.decreaseKey(bikes["topuso"], origin,oruseinv)
+    iminpq.increaseKey(bikes["topuso"], destination,desuse)
+    iminpq.increaseKey(bikes["topuso"], origin,oruse)
     iminpq.decreaseKey(bikes["topllegada"], destination,llegadainv)
     iminpq.decreaseKey(bikes["topsalida"], origin, salidainv)
     return bikes
@@ -308,7 +394,11 @@ def ConsultaRutasCirculares (bikes, vertice, inferior, superior):
     #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
     #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
     #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
-
+#requerimiento 6
+#requerimiento 6
+#requerimiento 6
+#requerimiento 6
+#requerimiento 6
 def rutarecomendada(bikes,strcoord,endcoord):
     rbt=bikes["stationtree"]
     values={"list":None}
@@ -343,6 +433,58 @@ def keyrange(root,keylo ,keyhi,values,coord,distance):
         if (root["key"]["lat"] < keyhi):
             keyrange(root['right'], keylo, keyhi, values,coord,distance)
     return values
+#requerimiento 3
+#requerimiento 3
+#requerimiento 3
+#requerimiento 3
+def requerimiento3(bikes):
+    retorno={"listuso":None,
+                "listsalida":None,
+                "listllegada":None}
+    retorno["listuso"]=lt.newList('SINGLELINKED', comparevalues)
+    retorno["listsalida"]=lt.newList('SINGLELINKED', comparevalues)
+    retorno["listllegada"]=lt.newList('SINGLELINKED', comparevalues)
+    while lt.size(retorno["listuso"])<3:
+        x=iminpq.delMin(bikes["topuso"])
+        lt.addLast(retorno["listuso"],x)
+    print("--------------------------------------------")
+    print(retorno["listuso"])
+    while lt.size(retorno["listsalida"])<3:
+        x=iminpq.delMin(bikes["topsalida"])
+        lt.addLast(retorno["listsalida"],x)
+    print("--------------------------------------------")
+    print(retorno["listsalida"])
+    while lt.size(retorno["listllegada"])<3:
+        x=iminpq.delMin(bikes["topllegada"])
+        lt.addLast(retorno["listllegada"],x)
+    print("--------------------------------------------")
+    print(retorno["listllegada"])
+
+    return retorno
+#requerimiento 5
+#requerimiento 5
+#requerimiento 5
+#requerimiento 5
+def requerimiento5(bikes,edad):
+    old=changeyear(edad)
+    entry=m.get(bikes["mayoressalida"],old)
+    print(entry)
+    value=me.getValue(entry)
+    vertex1=value["vertex"]
+    entry=m.get(bikes["mayoresllegada"],old)
+    print(entry)
+    value=me.getValue(entry)
+    vertex2=value["vertex"]
+    dijsktra=djk.Dijkstra(bikes["grafo"],vertex1)
+    if djk.hasPathTo(dijsktra,vertex2):
+        path=djk.pathTo(dijsktra,vertex2)
+        print(path)
+    else:
+        print("ñoquis")
+
+
+
+
 def minimumCostPath(bikes, vertice):
     """
     Retorna el camino de costo minimo entre la estacion de inicio
@@ -473,3 +615,38 @@ def lat(d,lat1):
     
     lat2 =degrees(lat2)
     return lat2
+def compareIds(id1, id2):
+    """
+    Compara dos accidentes por su id
+    """
+    id2 = id2['key']
+    if (id1 == id2):
+        return 0
+    elif id1 > id2:
+        return 1
+    else:
+        return -1
+def changeyear(year):
+    old=2020-int(year)
+    if old>=0 and old <=10:
+        old=0
+    elif old>=11 and old <=20:
+        old=11
+    elif old>=21 and old <=30:
+        old=21
+    elif old>=31 and old <=40:
+        old=31
+    elif old>=41 and old <=50:
+        old=41
+    elif old>=51 and old <=60:
+        old=51
+    elif old>=60:
+        old=60
+    return old
+def comparevalues(v1,v2):
+    if (v1 == v2):
+        return 0
+    elif v1 > v2:
+        return 1
+    else:
+        return -1

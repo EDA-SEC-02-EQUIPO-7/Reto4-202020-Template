@@ -44,7 +44,7 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
-BikesFiles = "201801-4-citibike-tripdata.csv"
+BikesFiles = "201801-1-citibike-tripdata.csv"
 initialStation = None
 recursionLimit = 20000
 
@@ -60,9 +60,10 @@ def printMenu():
     print("2- Cargar información de rutas")
     print("3- Consultar si dos vertices pertenecen a un mismo cluster (Requerimiento 1)")
     print("4- Consultar rutas cíclicas  ")
-    print("5- Requerimiento x ")
-    print("6- Requerimiento y ")
-    print("7- Requerimiento 6 ")
+    print("5- Requerimiento 3 ")
+    print("6- Requerimiento 4")
+    print("7- Requerimiento 5 ")
+    print("8- Requerimiento 6 ")
     print("0- Salir")
     print("*******************************************")
 
@@ -128,15 +129,19 @@ def optionFour():
     #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
     #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
 
-def optionseven():
+def optioneigth():
     strlat=input("Escriba la latitud de inicio")
     strlon=input("Escriba la longitud de inicio")
     endlat=input("Escriba la latitud de llegada")
     endlon=input("Escriba la longitud de llegada")
     res=controller.requerimiento6(cont,strlat,strlon,endlat,endlon)
 
-
-    
+def optionseven():
+    edad=input("Escriba su edad")
+    res=controller.requerimiento5(cont,edad)
+def optionfive():
+    controller.requerimiento3(cont)
+    return None
 
     
 
@@ -164,12 +169,19 @@ while True:
     elif int(inputs[0]) == 4:
         executiontime = timeit.timeit(optionFour, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
+    elif int(inputs[0]) == 5:
+        executiontime = timeit.timeit(optionfive, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
 
     elif int(inputs[0]) == 7:
         executiontime = timeit.timeit(optionseven, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
-
+    elif int(inputs[0]) == 8:
+        executiontime = timeit.timeit(optioneigth, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
 
     else:
         sys.exit(0)
 sys.exit(0)
+
+

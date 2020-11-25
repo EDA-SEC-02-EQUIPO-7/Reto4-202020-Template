@@ -83,7 +83,8 @@ def totalStations(bikes):
 def totalConnections(bikes):
     return model.totalConnections(bikes)
 
-
+def requerimiento3(bikes):
+    return model.requerimiento3(bikes)
 
 
 def requerimiento6(bikes,strlat,strlon,endlat,endlon):
@@ -96,7 +97,8 @@ def requerimiento6(bikes,strlat,strlon,endlat,endlon):
     endcoord["lat"]=(endlat)
     endcoord["lon"]=(endlon)
     return model.rutarecomendada(bikes,strcoord,endcoord)
-
+def requerimiento5(bikes,edad):
+    return model.requerimiento5(bikes,edad)
 
 
 
