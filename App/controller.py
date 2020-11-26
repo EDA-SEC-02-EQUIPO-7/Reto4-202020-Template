@@ -100,6 +100,9 @@ def requerimiento6(bikes,strlat,strlon,endlat,endlon):
 def requerimiento5(bikes,edad):
     return model.requerimiento5(bikes,edad)
 
+def rutasPorResistencia ( bikes, initialStation, time):
+    return (model.rutasPorResistencia(bikes,initialStation,time))
+
 
 
 def minimumCostPaths(analyzer, initialStation):

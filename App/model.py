@@ -433,6 +433,21 @@ def keyrange(root,keylo ,keyhi,values,coord,distance):
         if (root["key"]["lat"] < keyhi):
             keyrange(root['right'], keylo, keyhi, values,coord,distance)
     return values
+
+def rutasPorResistencia(bikes,initialStation,Limit):
+    LimitPaths = lt.newList("ARRAY_LIST")
+    shortParths = minimumCostPaths(bikes,initialStation)
+    stations = shortParths["paths"] ['visited']
+    desIterator =it.newIterator(ph.keySet(stations))
+    while it.hasNext(desIterator):
+        eachdesination = it.next(desIterator)
+        shortParth  = minimumCostPath(shortParths,eachdesination)
+        while not stack.isEmpty(shortParth):
+            eachPath = stack.pop(shortParth)
+            if int(eachPath["weight"]) <= Limit:
+                lt.addLast(LimitPaths, {"Initial Station":eachPath['vertexA'], "Final Station":eachPath['vertexB'], "Time":eachPath'weight'})
+    return (LimitPaths)
+    
 #requerimiento 3
 #requerimiento 3
 #requerimiento 3
