@@ -32,7 +32,7 @@ from DISClib.ADT import stack
 from DISClib.ADT import queue
 import timeit
 assert config
-
+from DISClib.DataStructures import listiterator as it
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones  y  por cada seleccion
@@ -44,7 +44,7 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
-BikesFiles = "201801-1-citibike-tripdata.csv"
+BikesFiles = "201801-0-citibike-tripdata.csv"
 initialStation = None
 recursionLimit = 20000
 
@@ -105,6 +105,14 @@ def optionFour():
             stopDOS = queue.dequeue(stop)
             print("-> Parte de la estacion {}, hasta la estación {} y tarda {} minutos en el trayecto. " .format( stopDOS['vertexA'],stopDOS['vertexB'], round((stopDOS['weight']/60), 2)))
         print ("\n")
+
+def optionFive ():
+    initialStation = input("Escriba la estacion de inicio del trayecto: ")
+    limite = input("Escriba la duracion deseada del trayecto: ")
+    lstpaths = it.newIterator(controller.rutasPorResistencia(cont,initialStation, int(limite)))
+    while it.hasNext(lstpaths):
+        eachPath = it.next(lstpaths )
+        print("Estacion de partida {} ---- Estacion de llegada {} ----- Duracion {} ".format(eachPath["Initial Station"], eachPath["Final Station"], eachPath["Time"]))
 
 
     #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
@@ -170,7 +178,7 @@ while True:
         executiontime = timeit.timeit(optionFour, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs[0]) == 5:
-        executiontime = timeit.timeit(optionfive, number=1)
+        executiontime = timeit.timeit(optionFive, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 
     elif int(inputs[0]) == 7:

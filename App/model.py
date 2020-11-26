@@ -41,6 +41,7 @@ from DISClib.ADT import stack
 from DISClib.ADT import queue
 from DISClib.Algorithms.Graphs import dfs
 from DISClib.Algorithms.Graphs import bfs
+from DISClib.DataStructures import probehashtable as ph
 
 """
 En este archivo definimos los TADs que vamos a usar y las operaciones
@@ -445,9 +446,9 @@ def rutasPorResistencia(bikes,initialStation,Limit):
         while not stack.isEmpty(shortParth):
             eachPath = stack.pop(shortParth)
             if int(eachPath["weight"]) <= Limit:
-                lt.addLast(LimitPaths, {"Initial Station":eachPath['vertexA'], "Final Station":eachPath['vertexB'], "Time":eachPath'weight'})
+                lt.addLast(LimitPaths, {"Initial Station":eachPath['vertexA'], "Final Station":eachPath['vertexB'], "Time":eachPath['weight']})
     return (LimitPaths)
-    
+
 #requerimiento 3
 #requerimiento 3
 #requerimiento 3
