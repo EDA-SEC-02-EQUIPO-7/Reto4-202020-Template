@@ -58,10 +58,10 @@ def printMenu():
     print("Bienvenido al servicio de consulta de CitiBikes\nEstas son las consultas que puede realizar:\n")
     print("1- Inicializar Analizador")
     print("2- Cargar información de rutas")
-    print("3- Consultar si dos vertices pertenecen a un mismo cluster (Requerimiento 1)")
+    print("3- Consultar si dos vertices pertenecen a un mismo cluster ")
     print("4- Consultar rutas cíclicas  ")
-    print("5- Requerimiento 3 ")
-    print("6- Requerimiento 4")
+    print("5- Consultar rutas Criticas")
+    print("6- Consular rutas segun resistencia")
     print("7- Requerimiento 5 ")
     print("8- Requerimiento 6 ")
     print("0- Salir")
@@ -106,6 +106,7 @@ def optionFour():
             print("-> Parte de la estacion {}, hasta la estación {} y tarda {} minutos en el trayecto. " .format( stopDOS['vertexA'],stopDOS['vertexB'], round((stopDOS['weight']/60), 2)))
         print ("\n")
 
+
 def optionFive ():
     initialStation = input("Escriba la estacion de inicio del trayecto: ")
     limite = input("Escriba la duracion deseada del trayecto: ")
@@ -114,7 +115,23 @@ def optionFive ():
         eachPath = it.next(lstpaths )
         print("Estacion de partida {} ---- Estacion de llegada {} ----- Duracion {} ".format(eachPath["Initial Station"], eachPath["Final Station"], eachPath["Time"]))
 
-
+def optionSix ():
+    topStations = controller.critical_Station(cont)
+    tops = it.newIterator(topStations["listllegada"])
+    print ("-----------------------------------------")
+    while it.hasNext(tops):
+        eachtop = it.next(tops)
+        print ("Las tres estaciones Top de llegada son: {}".format(eachtop))
+    print ("-----------------------------------------")
+    out = it.newIterator(topStations["listsalida"])
+    while it.hasNext(out):
+        eachtop = it.next(out)
+        print ("Las tres estaciones Top de Salida son: {}".format(eachtop))
+    print ("-----------------------------------------")
+    less = it.newIterator(topStations["listuso"])
+    while it.hasNext(less):
+        eachtop = it.next(less)
+        print ("Las tres estaciones Top de Menos usadas son: {}".format(eachtop))
     #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
@@ -144,9 +161,14 @@ def optioneigth():
     endlon=input("Escriba la longitud de llegada")
     res=controller.requerimiento6(cont,strlat,strlon,endlat,endlon)
 
-def optionseven():
-    edad=input("Escriba su edad")
-    res=controller.requerimiento5(cont,edad)
+def optionSeven():
+    edad = input("Escriba edad para generar una ruta recomendada: ")
+    recommendedPath = controller.recommendedPaths(cont,edad)
+    lstIterator = it.newIterator(recommendedPath)
+    while it.hasNext(lstIterator):
+        each = it.next(lstIterator)
+        print (("la Ruta recomendada para la edad de {} años, va desde la estacion {} a la estacion {} con una duracion de {} minutos".format(edad,each["vertexA"],each["vertexB"],each['weight'] )))
+
 def optionfive():
     controller.requerimiento3(cont)
     return None
@@ -177,12 +199,17 @@ while True:
     elif int(inputs[0]) == 4:
         executiontime = timeit.timeit(optionFour, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
+
     elif int(inputs[0]) == 5:
         executiontime = timeit.timeit(optionFive, number=1)
+        print("Tiempo de ejecución: " + str(executiontime)) 
+
+    elif int(inputs[0]) == 6:
+        executiontime = timeit.timeit(optionSix, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 
     elif int(inputs[0]) == 7:
-        executiontime = timeit.timeit(optionseven, number=1)
+        executiontime = timeit.timeit(optionSeven, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs[0]) == 8:
         executiontime = timeit.timeit(optioneigth, number=1)

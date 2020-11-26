@@ -83,8 +83,11 @@ def totalStations(bikes):
 def totalConnections(bikes):
     return model.totalConnections(bikes)
 
-def requerimiento3(bikes):
-    return model.requerimiento3(bikes)
+def critical_Station(bikes):
+    return model.critical_Station(bikes)
+
+def recommendedPaths(bikes,age):
+    return model.recommendedPaths(bikes,age)
 
 
 def requerimiento6(bikes,strlat,strlon,endlat,endlon):

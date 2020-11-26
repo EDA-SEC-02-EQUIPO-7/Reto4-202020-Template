@@ -421,6 +421,8 @@ def rutarecomendada(bikes,strcoord,endcoord):
         print(path)
     else:
         print("ñoquis")
+
+
 def keyrange(root,keylo ,keyhi,values,coord,distance):
     if (root is not None):
         y=float((root["key"]["lat"]))
@@ -453,50 +455,43 @@ def rutasPorResistencia(bikes,initialStation,Limit):
 #requerimiento 3
 #requerimiento 3
 #requerimiento 3
-def requerimiento3(bikes):
+def critical_Station (bikes):
     retorno={"listuso":None,
                 "listsalida":None,
                 "listllegada":None}
     retorno["listuso"]=lt.newList('SINGLELINKED', comparevalues)
     retorno["listsalida"]=lt.newList('SINGLELINKED', comparevalues)
     retorno["listllegada"]=lt.newList('SINGLELINKED', comparevalues)
-    while lt.size(retorno["listuso"])<3:
+    while lt.size(retorno["listuso"]) < 3:
         x=iminpq.delMin(bikes["topuso"])
         lt.addLast(retorno["listuso"],x)
-    print("--------------------------------------------")
-    print(retorno["listuso"])
-    while lt.size(retorno["listsalida"])<3:
+    while lt.size(retorno["listsalida"]) < 3:
         x=iminpq.delMin(bikes["topsalida"])
         lt.addLast(retorno["listsalida"],x)
-    print("--------------------------------------------")
-    print(retorno["listsalida"])
-    while lt.size(retorno["listllegada"])<3:
+    while lt.size(retorno["listllegada"]) < 3:
         x=iminpq.delMin(bikes["topllegada"])
         lt.addLast(retorno["listllegada"],x)
-    print("--------------------------------------------")
-    print(retorno["listllegada"])
-
     return retorno
 #requerimiento 5
 #requerimiento 5
 #requerimiento 5
 #requerimiento 5
-def requerimiento5(bikes,edad):
-    old=changeyear(edad)
-    entry=m.get(bikes["mayoressalida"],old)
-    print(entry)
+
+def recommendedPaths(bikes,edad):
+    old = changeyear(edad)
+    entry = m.get(bikes["mayoressalida"],old)
     value=me.getValue(entry)
     vertex1=value["vertex"]
     entry=m.get(bikes["mayoresllegada"],old)
-    print(entry)
     value=me.getValue(entry)
     vertex2=value["vertex"]
     dijsktra=djk.Dijkstra(bikes["grafo"],vertex1)
     if djk.hasPathTo(dijsktra,vertex2):
         path=djk.pathTo(dijsktra,vertex2)
-        print(path)
+        return (path)
     else:
-        print("ñoquis")
+        return("Se produjo un error")
+    
 
 
 
