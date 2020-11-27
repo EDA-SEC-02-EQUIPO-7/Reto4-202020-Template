@@ -188,22 +188,6 @@ def optionNine():
         print ("punto de partida {}, llegó a {}. ".format(stop[0], stop[1]))
   
     
-    
-    """
-
-    print ("\nSe encontraron en total {} rutas cíclicas:\n " .format(listaAdyacentes[0]))
-    
-    while (not stack.isEmpty(listaAdyacentes[1])): 
-        stop = stack.pop(listaAdyacentes[1])
-        print ("Esta ruta tarda en total {} minutos, tiene {} estaciones, teniendo en cuenta un tiempo de 20 minutos por estacion. " .format((round((stop["PesoPorRuta"]/60), 2)), str(queue.size(stop)), ))
-        while stop and (not queue.isEmpty(stop)):
-            stopDOS = queue.dequeue(stop)
-            print("-> Parte de la estacion {}, hasta la estación {} y tarda {} minutos en el trayecto. " .format( stopDOS['vertexA'],stopDOS['vertexB'], round((stopDOS['weight']/60), 2)))
-        print ("\n")
-
-    """
-
-    
 
 #Menu principal
 
