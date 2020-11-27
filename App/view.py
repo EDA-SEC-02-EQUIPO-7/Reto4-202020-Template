@@ -33,6 +33,7 @@ from DISClib.ADT import queue
 import timeit
 assert config
 from DISClib.DataStructures import listiterator as it
+from DISClib.ADT import list as lt
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones  y  por cada seleccion
@@ -109,7 +110,7 @@ def optionFour():
         print ("\n")
 
 
-def optionFive ():
+def optionSix ():
     initialStation = input("Escriba la estacion de inicio del trayecto: ")
     limite = input("Escriba la duracion deseada del trayecto: ")
     lstpaths = it.newIterator(controller.rutasPorResistencia(cont,initialStation, int(limite)))
@@ -117,23 +118,29 @@ def optionFive ():
         eachPath = it.next(lstpaths )
         print("Estacion de partida {} ---- Estacion de llegada {} ----- Duracion {} ".format(eachPath["Initial Station"], eachPath["Final Station"], eachPath["Time"]))
 
-def optionSix ():
+def optionFive ():
     topStations = controller.critical_Station(cont)
     tops = it.newIterator(topStations["listllegada"])
     print ("-----------------------------------------")
+    num=1
     while it.hasNext(tops):
         eachtop = it.next(tops)
-        print ("Las tres estaciones Top de llegada son: {}".format(eachtop))
+        print ("La estacion Top {} de llegada es: {}".format(num,eachtop))
+        num+=1
     print ("-----------------------------------------")
+    num=1
     out = it.newIterator(topStations["listsalida"])
     while it.hasNext(out):
         eachtop = it.next(out)
-        print ("Las tres estaciones Top de Salida son: {}".format(eachtop))
+        print ("La estaciones Top {} de Salida es: {}".format(num,eachtop))
+        num+=1
     print ("-----------------------------------------")
+    num=1
     less = it.newIterator(topStations["listuso"])
     while it.hasNext(less):
         eachtop = it.next(less)
-        print ("Las tres estaciones Top de Menos usadas son: {}".format(eachtop))
+        print ("La estacion Top {} de Menos uso es: {}".format(num,eachtop))
+        num+=1
     #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     """
     print ("\nSe encontraron en total {} rutas cíclicas:\n " .format(listaAdyacentes[0]))
@@ -154,20 +161,24 @@ def optioneigth():
     endlat = input("Escriba la latitud de llegada")
     endlon = input("Escriba la longitud de llegada")
     lstiterator =(controller.touristInterestPath(cont,strlat,strlon,endlat,endlon))
-    if lstiterator != None :
-        while not stack.isEmpty(lstiterator):
-            each = stack.pop(lstiterator)
-            print ("La ruta de interes turstico para las cordenadas inicia en la estacion {} hasta \nla estacion {} con una duración de {} minutos".format(each["vertexA"],each["vertexB"],each['weight']))
-    else: 
-        print("No se encontro una ruta que cumpla con los requisitos")
+    try:
+        if lstiterator["type"]== 'SINGLE_LINKED' or lstiterator["type"]== 'ARRAYLIST':
+            while not stack.isEmpty(lstiterator):
+                each = stack.pop(lstiterator)
+                print ("La ruta de interes turstico para las cordenadas inicia en la estacion {} hasta \nla estacion {} con una duración de {} minutos".format(each["vertexA"],each["vertexB"],each['weight']))
+    except: 
+        print("Entre la estacion "+lstiterator["start"]+" y la estacion "+lstiterator["end"]+ " No se encontro una ruta")
 
 def optionSeven():
     edad = input("Escriba edad para generar una ruta recomendada: ")
     recommendedPath = controller.recommendedPaths(cont,edad)
     lstIterator = it.newIterator(recommendedPath)
-    while it.hasNext(lstIterator):
-        each = it.next(lstIterator)
-        print (("la Ruta recomendada para la edad de {} años, va desde la estacion {} a la estacion {} con una duracion de {} minutos".format(edad,each["vertexA"],each["vertexB"],each['weight'] )))
+    if recommendedPath==None:
+        print("no existe ruta")
+    else:
+        while it.hasNext(lstIterator):
+            each = it.next(lstIterator)
+            print (("la Ruta recomendada para la edad de {} años, va desde la estacion {} a la estacion {} con una duracion de {} minutos".format(edad,each["vertexA"],each["vertexB"],each['weight'] )))
 
 def optionfive():
     controller.requerimiento3(cont)

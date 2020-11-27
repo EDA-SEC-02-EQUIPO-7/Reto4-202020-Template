@@ -174,10 +174,10 @@ def addTrip(bikes,trip):
 def addidname(map,trip):
     exi=m.contains(map,trip["start station id"])
     if exi ==False:
-        m.put(map,trip["start station id"],"start station name")
+        m.put(map,trip["start station id"],trip["start station name"])
     exi=m.contains(map,trip["end station id"])
     if exi ==False:
-        m.put(map,trip["end station id"],"end station name")
+        m.put(map,trip["end station id"],trip["end station name"])
 
     
 
@@ -524,19 +524,35 @@ def touristInterestPath(bikes,strcoord,endcoord):
     while lt.size(values["list"])==0:
         values= keyrange(rbt['root'], lat(-distance,float(strcoord["lat"])), lat(distance,float(strcoord["lat"])),values,strcoord,distance)
         distance+=0.01
-    estacioninicio=str(int(lt.getElement(values["list"],1)["id"]))
+    menor=500000000000000000000000000000000
+    id=""
+    tops = it.newIterator(values["list"])
+    while it.hasNext(tops):
+        eachtop = it.next(tops)
+        if haversine(float(eachtop["lat"]),float(eachtop["lon"]),float(strcoord["lat"]),float(strcoord["lat"]))<menor:
+            menor=haversine(float(eachtop["lat"]),float(eachtop["lon"]),float(strcoord["lat"]),float(strcoord["lat"]))
+            id=eachtop["id"]
+    estacioninicio=str(int(id))
     values["list"]=lt.newList('SINGLELINKED', rbt['cmpfunction'])
     distance=0.01
     while lt.size(values["list"])==0:
         values= keyrange(rbt['root'], lat(-distance,float(endcoord["lat"])), lat(distance,float(endcoord["lat"])),values,endcoord,distance)
         distance+=0.01
-    estacionfinal=str(int(lt.getElement(values["list"],1)["id"]))
+    menor=500000000000000000000000000000000
+    id=""
+    tops = it.newIterator(values["list"])
+    while it.hasNext(tops):
+        eachtop = it.next(tops)
+        if haversine(float(eachtop["lat"]),float(eachtop["lon"]),float(endcoord["lat"]),float(endcoord["lat"]))<menor:
+            menor=haversine(float(eachtop["lat"]),float(eachtop["lon"]),float(endcoord["lat"]),float(endcoord["lat"]))
+            id=eachtop["id"]
+    estacionfinal=str(int(id))
     dijsktra=djk.Dijkstra(bikes["grafo"],estacioninicio)
     if djk.hasPathTo(dijsktra,estacionfinal):
         path=djk.pathTo(dijsktra,estacionfinal)
-        return (path)
+        return path
     else:
-        return (-1)
+        return {"start":estacioninicio,"end":estacionfinal}
 
 
 def keyrange(root,keylo ,keyhi,values,coord,distance):
@@ -580,12 +596,18 @@ def critical_Station (bikes):
     retorno["listllegada"]=lt.newList('SINGLELINKED', comparevalues)
     while lt.size(retorno["listuso"]) < 3:
         x=iminpq.delMin(bikes["topuso"])
+        x=m.get(bikes["names"],x)
+        x=me.getValue(x)
         lt.addLast(retorno["listuso"],x)
     while lt.size(retorno["listsalida"]) < 3:
         x=iminpq.delMin(bikes["topsalida"])
+        x=m.get(bikes["names"],x)
+        x=me.getValue(x)
         lt.addLast(retorno["listsalida"],x)
     while lt.size(retorno["listllegada"]) < 3:
         x=iminpq.delMin(bikes["topllegada"])
+        x=m.get(bikes["names"],x)
+        x=me.getValue(x)
         lt.addLast(retorno["listllegada"],x)
     return retorno
 #requerimiento 5
