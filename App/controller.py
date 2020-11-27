@@ -90,7 +90,7 @@ def recommendedPaths(bikes,age):
     return model.recommendedPaths(bikes,age)
 
 
-def requerimiento6(bikes,strlat,strlon,endlat,endlon):
+def touristInterestPath(bikes,strlat,strlon,endlat,endlon):
     strcoord={"lat":None,
             "lon":None}
     endcoord={"lat":None,
@@ -99,9 +99,7 @@ def requerimiento6(bikes,strlat,strlon,endlat,endlon):
     strcoord["lon"]=(strlon)
     endcoord["lat"]=(endlat)
     endcoord["lon"]=(endlon)
-    return model.rutarecomendada(bikes,strcoord,endcoord)
-def requerimiento5(bikes,edad):
-    return model.requerimiento5(bikes,edad)
+    return model.touristInterestPath(bikes,strcoord,endcoord)
 
 def rutasPorResistencia ( bikes, initialStation, time):
     return (model.rutasPorResistencia(bikes,initialStation,time))

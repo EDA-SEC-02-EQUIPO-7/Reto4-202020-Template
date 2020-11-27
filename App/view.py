@@ -75,8 +75,9 @@ def optionTwo():
     print ("El numero de Estaciones cargadas es {}".format(controller.totalStations(cont)))
     print ("El numero Conecciones cargadas es {}".format(controller.totalConnections(cont)))
     print ("El numero de viajes cargados es de {} ".format(total_trips))
+    print ( cont["tablesalida"])
     
-
+    
 def optionThree():
     #Determinar si dos estaciones pertenecen a un mismo cluster
     print ("\nIngrese el nombre de las dos estaciones que desea consultar:")
@@ -133,14 +134,8 @@ def optionSix ():
         eachtop = it.next(less)
         print ("Las tres estaciones Top de Menos usadas son: {}".format(eachtop))
     #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    #NO BORRAR LO COMENTADO ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-
     """
-    
     print ("\nSe encontraron en total {} rutas cíclicas:\n " .format(listaAdyacentes[0]))
-    
-    
     while (not stack.isEmpty(listaAdyacentes[1])): 
         stop = stack.pop(listaAdyacentes[1])
         print ("Esta ruta tiene en total {} estaciones, teniendo en cuenta un tiempo de 20 minutos por estacion sumado al tiempo estimado de recorrido, este camino tarda en total {} minutos" .format(str(stack.size(stop)), (round((stop["PesoTotal"]/60), 2))))
@@ -151,15 +146,19 @@ def optionSix ():
         """
 
     #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
-    #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
-    #NO BORRAR LO COMENTADO ↑↑↑↑↑↑↑↑
 
 def optioneigth():
-    strlat=input("Escriba la latitud de inicio")
-    strlon=input("Escriba la longitud de inicio")
-    endlat=input("Escriba la latitud de llegada")
-    endlon=input("Escriba la longitud de llegada")
-    res=controller.requerimiento6(cont,strlat,strlon,endlat,endlon)
+    strlat = input("Escriba la latitud de inicio")
+    strlon = input("Escriba la longitud de inicio")
+    endlat = input("Escriba la latitud de llegada")
+    endlon = input("Escriba la longitud de llegada")
+    lstiterator =(controller.touristInterestPath(cont,strlat,strlon,endlat,endlon))
+    if lstiterator != None :
+        while not stack.isEmpty(lstiterator):
+            each = stack.pop(lstiterator)
+            print ("La ruta de interes turstico para las cordenadas inicia en la estacion {} hasta \nla estacion {} con una duración de {} minutos".format(each["vertexA"],each["vertexB"],each['weight']))
+    else: 
+        print("No se encontro una ruta que cumpla con los requisitos")
 
 def optionSeven():
     edad = input("Escriba edad para generar una ruta recomendada: ")

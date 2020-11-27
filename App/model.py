@@ -400,7 +400,7 @@ def ConsultaRutasCirculares (bikes, vertice, inferior, superior):
 #requerimiento 6
 #requerimiento 6
 #requerimiento 6
-def rutarecomendada(bikes,strcoord,endcoord):
+def touristInterestPath(bikes,strcoord,endcoord):
     rbt=bikes["stationtree"]
     values={"list":None}
     values["list"]=lt.newList('SINGLELINKED', rbt['cmpfunction'])
@@ -418,9 +418,9 @@ def rutarecomendada(bikes,strcoord,endcoord):
     dijsktra=djk.Dijkstra(bikes["grafo"],estacioninicio)
     if djk.hasPathTo(dijsktra,estacionfinal):
         path=djk.pathTo(dijsktra,estacionfinal)
-        print(path)
+        return (path)
     else:
-        print("ñoquis")
+        return (-1)
 
 
 def keyrange(root,keylo ,keyhi,values,coord,distance):
@@ -492,10 +492,6 @@ def recommendedPaths(bikes,edad):
     else:
         return("Se produjo un error")
     
-
-
-
-
 def minimumCostPath(bikes, vertice):
     """
     Retorna el camino de costo minimo entre la estacion de inicio
