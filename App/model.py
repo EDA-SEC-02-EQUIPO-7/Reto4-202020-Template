@@ -42,7 +42,8 @@ from DISClib.ADT import queue
 from DISClib.Algorithms.Graphs import dfs
 from DISClib.Algorithms.Graphs import bfs
 from DISClib.DataStructures import probehashtable as ph
-
+import datetime
+import time
 """
 En este archivo definimos los TADs que vamos a usar y las operaciones
 de creacion y consulta sobre las estructuras de datos.
@@ -83,6 +84,11 @@ def newAnalyzer():
                                       comparefunction=compareIds)
     bikes["names"]=m.newMap(maptype='',
                                       comparefunction=compareIds)
+
+    bikes["BikesIDs"]=m.newMap(50000,
+                                  maptype='PROBING',
+                                  loadfactor=0.5,
+                                  comparefunction=compareIds)
     return bikes
 
 def addTrip(bikes,trip):
@@ -160,6 +166,9 @@ def addTrip(bikes,trip):
     else:
         m.put(bikes["mayoresllegada"],age,{"vertex":trip["end station id"],"cantidad":num})
         entry=m.get(bikes["mayoresllegada"],age)
+
+    
+    AddBike(bikes, trip["bikeid"], trip)
     
 
 def addidname(map,trip):
@@ -229,7 +238,114 @@ def addConnection(bikes, origin , destination , duration):
     return bikes
 
 
+
+
+#INTENTO REQUERIMIENTO 8 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+#INTENTO REQUERIMIENTO 8 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+#INTENTO REQUERIMIENTO 8 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+def AddBike(bikes, EachBikeID, trip):
+    BikesHash = bikes["BikesIDs"]
+    ExistBike = m.contains(BikesHash,EachBikeID)
+
+    if ExistBike:
+        entry = m.get(BikesHash,EachBikeID)
+        ThatBike = me.getValue(entry)
+        #print (ThatBike)
+        HashFechas = ThatBike['Fechas']
+
+        ExistDate = m.contains(HashFechas, str ((datetime.datetime.strptime((trip["starttime"][:19]), '%Y-%m-%d %H:%M:%S')).date()))
+        if ExistDate:
+            entryDate = m.get(HashFechas, str ((datetime.datetime.strptime((trip["starttime"][:19]), '%Y-%m-%d %H:%M:%S')).date())) 
+            DichaFecha = me.getValue(entryDate)
+            UpdateTimes(DichaFecha, trip)
+            #print (DichaFecha)
+        else:
+            GivenDate = NewDate (trip)
+            m.put(ThatBike["Fechas"],  str ((datetime.datetime.strptime((trip["starttime"][:19]), '%Y-%m-%d %H:%M:%S')).date()), GivenDate)
+
+
+    else:
+        ThatBike = NewBike(EachBikeID)
+        m.put(BikesHash, EachBikeID, ThatBike)
+        entry = m.get(BikesHash,EachBikeID)
+        ThatBike = me.getValue(entry)
+        ThatBike["Fechas"] = m.newMap(71,
+                                  maptype='PROBING',
+                                  loadfactor=0.5,
+                                  comparefunction=compareIds)
+
+        GivenDate = NewDate (trip)
+        m.put(ThatBike["Fechas"],  str ((datetime.datetime.strptime((trip["starttime"][:19]), '%Y-%m-%d %H:%M:%S')).date()), GivenDate)
+        
+
+def NewBike (EachBikeID):
+    CadaBicicleta = {'ID': None , "Fechas": None}
+    CadaBicicleta['ID'] = EachBikeID
+    CadaBicicleta['Fechas'] = None
+    return CadaBicicleta
+
+
+def NewDate (trip):
+
+    CadaFecha = {"bicicleta": None, "Date": None, 'HoraInicio': None , 'HoraFin': None,  "SegundosUsada": None, "SegundosParqueada": 0, "RecorridosRealizados": None}
+    CadaFecha["Date"] = (datetime.datetime.strptime((trip["starttime"][:19]), '%Y-%m-%d %H:%M:%S')).date()
+    CadaFecha["bicicleta"] = trip["bikeid"]
+
+    CadaFecha["HoraInicio"] = datetime.datetime.strptime((trip["starttime"][:19]), '%Y-%m-%d %H:%M:%S') 
+    CadaFecha["HoraFin"] = datetime.datetime.strptime((trip["stoptime"][:19]), '%Y-%m-%d %H:%M:%S')
+
+    Delta = CadaFecha["HoraFin"]-CadaFecha["HoraInicio"]
+    SegundosPorViaje = (Delta.total_seconds())
+    CadaFecha["SegundosUsada"] = SegundosPorViaje
+
+    CadaFecha["RecorridosRealizados"] = stack.newStack()
+    stack.push(CadaFecha["RecorridosRealizados"], (trip["start station id"], trip["end station id"]) )
+
+    return CadaFecha
+
+
+def UpdateTimes (FechaExistente, trip):
+
+    DeltaParquedo = abs ( (datetime.datetime.strptime((trip["starttime"][:19]), '%Y-%m-%d %H:%M:%S')) - FechaExistente["HoraFin"]  )
+    SegundosParqueada = (DeltaParquedo.total_seconds())
+    FechaExistente["SegundosParqueada"] += SegundosParqueada
+
+    FechaExistente["HoraInicio"] = datetime.datetime.strptime((trip["starttime"][:19]), '%Y-%m-%d %H:%M:%S') 
+    FechaExistente["HoraFin"] = datetime.datetime.strptime((trip["stoptime"][:19]), '%Y-%m-%d %H:%M:%S')
+
+    Delta = FechaExistente["HoraFin"]-FechaExistente["HoraInicio"]
+    SegundosPorViaje = (Delta.total_seconds())
+    FechaExistente["SegundosUsada"] += SegundosPorViaje
+
+    stack.push(FechaExistente["RecorridosRealizados"], (trip["start station id"], trip["end station id"]) )
+
+    return FechaExistente
+
+
+
+def MantenimientoBicicletas (bikes, IdentificadorBicicleta, FechaDeBusqueda):
     
+    entry = m.get(bikes["BikesIDs"],IdentificadorBicicleta)
+    ValorBicicleta = me.getValue(entry)
+
+    #print (m.keySet(ValorBicicleta["Fechas"]))
+    #print (ValorBicicleta)
+
+    ExisteEsaFecha = m.contains(ValorBicicleta["Fechas"], FechaDeBusqueda)
+
+    if ExisteEsaFecha:
+        entryDeFecha = m.get(ValorBicicleta["Fechas"], FechaDeBusqueda)
+        DichaFecha = me.getValue(entryDeFecha)
+        return DichaFecha
+
+
+
+
+#INTENTO REQUERIMIENTO 8 ↑↑↑↑↑↑↑↑
+#INTENTO REQUERIMIENTO 8 ↑↑↑↑↑↑↑↑
+#INTENTO REQUERIMIENTO 8 ↑↑↑↑↑↑↑↑
+
 
 # ==============================
 # Funciones de requerimientos

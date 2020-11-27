@@ -123,3 +123,8 @@ def minimumCostPath(analyzer, destStation):
     Retorna el camino de costo minimo desde initialStation a destStation
     """
     return model.minimumCostPath(analyzer, destStation)
+
+
+def MantenimientoBicicletas (bikes, IdentificadorBicicleta, FechaDeBusqueda):
+    return model.MantenimientoBicicletas (bikes, IdentificadorBicicleta, FechaDeBusqueda)
+

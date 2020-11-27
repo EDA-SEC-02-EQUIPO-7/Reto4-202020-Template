@@ -44,7 +44,7 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
-BikesFiles = "201801-0-citibike-tripdata.csv"
+BikesFiles = "201801-1-citibike-tripdata.csv"
 initialStation = None
 recursionLimit = 20000
 
@@ -64,6 +64,7 @@ def printMenu():
     print("6- Consular rutas segun resistencia")
     print("7- Requerimiento 5 ")
     print("8- Requerimiento 6 ")
+    print("9- Requerimiento 8 - Mantenimiento bicicletas ")
     print("0- Salir")
     print("*******************************************")
 
@@ -75,7 +76,7 @@ def optionTwo():
     print ("El numero de Estaciones cargadas es {}".format(controller.totalStations(cont)))
     print ("El numero Conecciones cargadas es {}".format(controller.totalConnections(cont)))
     print ("El numero de viajes cargados es de {} ".format(total_trips))
-    print ( cont["tablesalida"])
+    #print ( cont["tablesalida"])
     
     
 def optionThree():
@@ -172,6 +173,36 @@ def optionfive():
     controller.requerimiento3(cont)
     return None
 
+def optionNine():
+    
+    identificadorproblema = input ("Ingrese el número de la bicicleta a consultar (Ejemplo 33319, 31956): ")
+    fechaproblema = input("Ingrese la fecha que desee consultar (Ej 2018-01-21; 2018-01-11): ")
+
+    RequiereMantenimiento = controller.MantenimientoBicicletas(cont, identificadorproblema, fechaproblema)
+
+    print ("El día {}, La bicicleta identificada con el número {}, ha sido usada en total {} minutos, mientras ha estado estacionada {} minutos en total. ".format(fechaproblema, identificadorproblema, str(round  ( ( RequiereMantenimiento['SegundosUsada'] / 60), 2)), str(round  ( ( RequiereMantenimiento['SegundosParqueada'] / 60), 2))))                                   
+    print ("Los viajes que se han registrado son: ")
+
+    while (not stack.isEmpty(RequiereMantenimiento["RecorridosRealizados"])): 
+        stop = stack.pop(RequiereMantenimiento["RecorridosRealizados"])
+        print ("punto de partida {}, llegó a {}. ".format(stop[0], stop[1]))
+  
+    
+    
+    """
+
+    print ("\nSe encontraron en total {} rutas cíclicas:\n " .format(listaAdyacentes[0]))
+    
+    while (not stack.isEmpty(listaAdyacentes[1])): 
+        stop = stack.pop(listaAdyacentes[1])
+        print ("Esta ruta tarda en total {} minutos, tiene {} estaciones, teniendo en cuenta un tiempo de 20 minutos por estacion. " .format((round((stop["PesoPorRuta"]/60), 2)), str(queue.size(stop)), ))
+        while stop and (not queue.isEmpty(stop)):
+            stopDOS = queue.dequeue(stop)
+            print("-> Parte de la estacion {}, hasta la estación {} y tarda {} minutos en el trayecto. " .format( stopDOS['vertexA'],stopDOS['vertexB'], round((stopDOS['weight']/60), 2)))
+        print ("\n")
+
+    """
+
     
 
 #Menu principal
@@ -212,6 +243,10 @@ while True:
         print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs[0]) == 8:
         executiontime = timeit.timeit(optioneigth, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+    
+    elif int(inputs[0]) == 9:
+        executiontime = timeit.timeit(optionNine, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 
     else:
