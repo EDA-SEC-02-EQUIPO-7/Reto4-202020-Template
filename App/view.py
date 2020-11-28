@@ -197,6 +197,17 @@ def optionNine():
     while (not stack.isEmpty(RequiereMantenimiento["RecorridosRealizados"])): 
         stop = stack.pop(RequiereMantenimiento["RecorridosRealizados"])
         print ("punto de partida {}, llegó a {}. ".format(stop[0], stop[1]))
+
+def optionTen():
+    edad = input("Escriba edad para generar una ruta recomendada: ")
+    recommendedPath = controller.recommendedPathsBono(cont,edad)
+    lstIterator = it.newIterator(recommendedPath)
+    while it.hasNext(lstIterator):
+        it.next(lstIterator)
+        each = it.next(lstIterator)
+        while (not stack.isEmpty(each)): 
+            stop = stack.pop(each)
+        print (("es el par de estaciones  {} y {} ".format(stop["vertexA"],stop["vertexB"] )))
   
     
 
@@ -206,7 +217,7 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n>')
 
-    if int(inputs[0]) == 1:
+    if int(inputs) == 1:
         print("\nInicializando....")
         # cont es el controlador que se usará de acá en adelante
         cont = controller.newAnalyzer()
@@ -243,7 +254,11 @@ while True:
     elif int(inputs[0]) == 9:
         executiontime = timeit.timeit(optionNine, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
-
+    
+    elif int(inputs) == 10:
+        executiontime = timeit.timeit(optionTen, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+        sys.exit(0)
     else:
         sys.exit(0)
 sys.exit(0)

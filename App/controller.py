@@ -64,12 +64,14 @@ def loadFile(bikes, tripfile):
     for trip in input_file:
         model.addTrip(bikes, trip)
         total_trips += 1 
+    model.revisariguales(bikes)
     return [bikes,total_trips]
 
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
-
+def recommendedPathsBono ( bikes,año):
+    return (model.recommendedPathsBono(bikes,año))
 
 def numero_SCC(bikes):
     return model.numSCC(bikes)

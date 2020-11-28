@@ -165,10 +165,76 @@ def addTrip(bikes,trip):
             entry=m.get(bikes["mayoresllegada"],age)
     else:
         m.put(bikes["mayoresllegada"],age,{"vertex":trip["end station id"],"cantidad":num})
-        entry=m.get(bikes["mayoresllegada"],age)
-
-    
+        entry=m.get(bikes["mayoresllegada"],age)    
     AddBike(bikes, trip["bikeid"], trip)
+    if trip["usertype"] == "Customer":
+        exi=m.contains(bikes["ageVertexAHash"],trip["start station id"])
+        if exi:
+            entry=m.get(bikes["ageVertexAHash"],trip["start station id"])
+            ages=me.getValue(entry)
+            exi=m.contains(ages,age)
+            if exi:
+                entry=m.get(ages,age)
+                part=me.getValue(entry)
+                m.put(ages,age,part+1)
+            else:
+                m.put(ages,age,1)
+        else:
+            ages=m.newMap(maptype='',comparefunction=compareIds)
+            m.put(bikes["ageVertexAHash"],trip["start station id"],ages)
+            entry=m.get(bikes["ageVertexAHash"],trip["start station id"])
+            ages=me.getValue(entry)
+            m.put(ages,age,1)
+            lt.addLast(bikes["agesA"],age)
+        entry=m.get(bikes["ageVertexAHash"],trip["start station id"])
+        ages=me.getValue(entry)
+        cant=m.get(ages,age)
+        num=me.getValue(cant)
+        exi=m.contains(bikes["stationVertexAHash"],age)
+        if exi:
+            mayor=m.get(bikes["stationVertexAHash"],age)
+            vertex=me.getValue(mayor)
+            numero=vertex["cantidad"]
+            if numero < num:
+                m.put(bikes["stationVertexAHash"],age,{"vertex":trip["start station id"],"cantidad":num, "suscription": trip["usertype"] })
+                entry=m.get(bikes["stationVertexAHash"],age)
+        else:
+            m.put(bikes["stationVertexAHash"],age,{"vertex":trip["start station id"],"cantidad":num, "suscription": trip["usertype"] })
+            entry=m.get(bikes["stationVertexAHash"],age)
+        
+        exi=m.contains(bikes["ageVertexBHash"],trip["end station id"])
+        if exi:
+            entry=m.get(bikes["ageVertexBHash"],trip["end station id"])
+            ages=me.getValue(entry)
+            exi=m.contains(ages,age)
+            if exi:
+                entry=m.get(ages,age)
+                part=me.getValue(entry)
+                m.put(ages,age,part+1)
+            else:
+                m.put(ages,age,1)
+        else:
+            ages=m.newMap(maptype='',comparefunction=compareIds)
+            m.put(bikes["ageVertexBHash"],trip["end station id"],ages)
+            entry=m.get(bikes["ageVertexBHash"],trip["end station id"])
+            ages=me.getValue(entry)
+            m.put(ages,age,1)
+            lt.addLast(bikes["agesB"],age)
+        entry=m.get(bikes["ageVertexBHash"],trip["end station id"])
+        ages=me.getValue(entry)
+        cant=m.get(ages,age)
+        num=me.getValue(cant)
+        exi=m.contains(bikes["stationVertexBHash"],age)
+        if exi:
+            mayor=m.get(bikes["stationVertexBHash"],age)
+            vertex=me.getValue(mayor)
+            numero=vertex["cantidad"]
+            if numero<num:
+                m.put(bikes["stationVertexBHash"],age,{"vertex":trip["end station id"],"cantidad":num,  "suscription": trip["usertype"] })
+                entry=m.get(bikes["stationVertexBHash"],age)
+        else:
+            m.put(bikes["stationVertexBHash"],age,{"vertex":trip["end station id"],"cantidad":num, "suscription": trip["usertype"] })
+            entry=m.get(bikes["stationVertexBHash"],age)
     
 
 def addidname(map,trip):
@@ -179,7 +245,25 @@ def addidname(map,trip):
     if exi ==False:
         m.put(map,trip["end station id"],trip["end station name"])
 
-    
+def revisariguales(bikes):
+    lstages = it.newIterator(bikes["agesA"])
+    while it.hasNext(lstages):
+        eachage = int(it.next(lstages))
+        if not m.contains(bikes["ageTrips"],eachage):
+            m.put(bikes["ageTrips"],eachage,{"VerticeA":None,"VerticeB":None})
+        value = me.getValue(m.get(bikes["ageTrips"],eachage))
+        value["VerticeA"] = lt.newList('SINGLE_LINKED')
+        lt.addLast(value["VerticeA"] ,((me.getValue(m.get(bikes["stationVertexAHash"],eachage)))["vertex"]))
+        lstiterator = it.newIterator(m.keySet(bikes["ageVertexAHash"]))
+        while it.hasNext(lstiterator):
+                eachStation = it.next(lstiterator)
+                mayorSalida = (me.getValue(m.get(bikes["stationVertexAHash"],eachage)))["cantidad"]
+                actualcantsalida = (me.getValue(m.get(bikes["ageVertexAHash"],eachStation)))
+                if  m.contains(actualcantsalida,eachage):
+                    actualcantsalida = me.getValue((m.get(actualcantsalida,eachage)))
+                    if mayorSalida == actualcantsalida:
+                        VerticeA  = me.getValue(m.get(bikes["ageTrips"],eachage))["VerticeA"]
+                        lt.addLast(VerticeA,eachStation)
 
 def updateCoordIndex(map,trip):
     occurredCoord ={"lat":float(trip["start station latitude"]),"lon":float(trip["start station longitude"]),"id":float(trip["start station id"])}
@@ -338,6 +422,24 @@ def MantenimientoBicicletas (bikes, IdentificadorBicicleta, FechaDeBusqueda):
         entryDeFecha = m.get(ValorBicicleta["Fechas"], FechaDeBusqueda)
         DichaFecha = me.getValue(entryDeFecha)
         return DichaFecha
+
+def recommendedPathsBono (bikes,edad):
+    paths = lt.newList('SINGLE_LINKED')
+    old = int(edad)
+    VerticeA  = (me.getValue(m.get(bikes["ageTrips"],old)))["VerticeA"]
+    lstVerticeA = it.newIterator(VerticeA)
+    while it.hasNext(lstVerticeA):
+        vertex1 = it.next(lstVerticeA)
+        VerticeB  = (me.getValue(m.get(bikes["ageTrips"],old)))["VerticeB"]
+        lstVerticeB = it.newIterator(VerticeB)
+        while it.hasNext(lstVerticeB):
+            vertex2 = it.next(lstVerticeB)
+            vertex1 = it.next(lstVerticeA)
+            dijsktra = djk.Dijkstra(bikes["grafo"],vertex1)
+            if djk.hasPathTo(dijsktra,vertex2):
+                path = djk.pathTo(dijsktra,vertex2)
+                lt.addLast(paths,path)
+    return (paths)
 
 
 
