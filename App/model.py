@@ -89,6 +89,19 @@ def newAnalyzer():
                                   maptype='PROBING',
                                   loadfactor=0.5,
                                   comparefunction=compareIds)
+
+    bikes["ageVertexAHash"]= m.newMap(maptype='',
+                                      comparefunction=compareIds)
+    bikes["ageVertexBHash"]= m.newMap(maptype='',
+                                      comparefunction=compareIds)
+    bikes["stationVertexAHash"]=m.newMap(maptype='',
+                                      comparefunction=compareIds)
+    bikes["stationVertexBHash"]=m.newMap(maptype='',
+                                      comparefunction=compareIds)
+    bikes["ageTrips"]=m.newMap(maptype='',
+                                      comparefunction=compareIds)
+    bikes["agesA"]= lt.newList('SINGLE_LINKED')
+    bikes["agesB"]= lt.newList('SINGLE_LINKED')
     return bikes
 
 def addTrip(bikes,trip):
@@ -235,15 +248,7 @@ def addTrip(bikes,trip):
         else:
             m.put(bikes["stationVertexBHash"],age,{"vertex":trip["end station id"],"cantidad":num, "suscription": trip["usertype"] })
             entry=m.get(bikes["stationVertexBHash"],age)
-    
 
-def addidname(map,trip):
-    exi=m.contains(map,trip["start station id"])
-    if exi ==False:
-        m.put(map,trip["start station id"],trip["start station name"])
-    exi=m.contains(map,trip["end station id"])
-    if exi ==False:
-        m.put(map,trip["end station id"],trip["end station name"])
 
 def revisariguales(bikes):
     lstages = it.newIterator(bikes["agesA"])
@@ -264,6 +269,34 @@ def revisariguales(bikes):
                     if mayorSalida == actualcantsalida:
                         VerticeA  = me.getValue(m.get(bikes["ageTrips"],eachage))["VerticeA"]
                         lt.addLast(VerticeA,eachStation)
+    lstages = it.newIterator(bikes["agesB"])
+    while it.hasNext(lstages):
+        eachage = int(it.next(lstages))
+        if not m.contains(bikes["ageTrips"],eachage):
+            m.put(bikes["ageTrips"],eachage,{"VerticeA":None,"VerticeB":None})
+        value = me.getValue(m.get(bikes["ageTrips"],eachage))
+        value["VerticeB"] = lt.newList('SINGLE_LINKED')
+        lt.addLast(value["VerticeB"],((me.getValue(m.get(bikes["stationVertexBHash"],eachage)))["vertex"]))
+        lstiterator = it.newIterator(m.keySet(bikes["ageVertexBHash"]))
+        while it.hasNext(lstiterator):
+            eachStation = it.next(lstiterator)
+            if eachStation != None and eachage != None:
+                mayorLLegada = (me.getValue(m.get(bikes["stationVertexBHash"],eachage)))["cantidad"]
+                actualcantllegada = (me.getValue(m.get(bikes["ageVertexBHash"],eachStation)))
+                if  m.contains(actualcantllegada,eachage):
+                    actualcantllegada = me.getValue((m.get(actualcantllegada,eachage)))
+                    if mayorLLegada == actualcantllegada :
+                        VerticeB  = me.getValue(m.get(bikes["ageTrips"],eachage))["VerticeB"]
+                        lt.addLast(VerticeB,eachStation)
+
+def addidname(map,trip):
+    exi=m.contains(map,trip["start station id"])
+    if exi ==False:
+        m.put(map,trip["start station id"],trip["start station name"])
+    exi=m.contains(map,trip["end station id"])
+    if exi ==False:
+        m.put(map,trip["end station id"],trip["end station name"])
+
 
 def updateCoordIndex(map,trip):
     occurredCoord ={"lat":float(trip["start station latitude"]),"lon":float(trip["start station longitude"]),"id":float(trip["start station id"])}

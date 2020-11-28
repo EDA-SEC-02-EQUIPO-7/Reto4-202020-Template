@@ -63,9 +63,9 @@ def printMenu():
     print("4- Consultar rutas cíclicas  ")
     print("5- Consultar rutas Criticas")
     print("6- Consular rutas segun resistencia")
-    print("7- Requerimiento 5 ")
-    print("8- Requerimiento 6 ")
-    print("9- Requerimiento 8 - Mantenimiento bicicletas ")
+    print("7- Recomendador de rutas  ")
+    print("8- Interes Turistico ")
+    print ("10-Identificación de Estaciones para Publicidad  ")
     print("0- Salir")
     print("*******************************************")
 
@@ -180,9 +180,6 @@ def optionSeven():
             each = it.next(lstIterator)
             print (("la Ruta recomendada para la edad de {} años, va desde la estacion {} a la estacion {} con una duracion de {} minutos".format(edad,each["vertexA"],each["vertexB"],each['weight'] )))
 
-def optionfive():
-    controller.requerimiento3(cont)
-    return None
 
 def optionNine():
     
